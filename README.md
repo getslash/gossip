@@ -1,10 +1,10 @@
 
-![Build Status] (https://secure.travis-ci.org/vmalloc/captainhook.png )
+![Build Status] (https://secure.travis-ci.org/vmalloc/capnhook.png )
 
 
-![Downloads] (https://pypip.in/d/captainhook/badge.png )
+![Downloads] (https://pypip.in/d/capnhook/badge.png )
 
-![Version] (https://pypip.in/v/captainhook/badge.png )
+![Version] (https://pypip.in/v/capnhook/badge.png )
 
 Overview
 ========
