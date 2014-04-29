@@ -39,6 +39,8 @@ Called
 
 ```
 
+For more advanced uses, please refer to [the documentation](http://capnhook.readthedocs.org ) 
+										
 
 # Licence
 
