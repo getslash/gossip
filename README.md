@@ -6,12 +6,41 @@
 
 ![Version] (https://pypip.in/v/capnhook/badge.png )
 
-Overview
-========
+# Overview
+
+`capnhook` is a library implementing a basic hook mechanism for implementing callbacks. It provides flexible configuration, hook namespaces and error handling strategies.
+
+# Installation
+
+```
+$ pip install capnhook
+```
+
+# Usage
+
+The simplest use case when we want to register a callback to be called later. We start by registering a callback through `capnhook.register`:
+
+```python
+
+>>> from __future__ import print_function
+>>> import capnhook
+>>> @capnhook.register('hook_name')
+... def func():
+...     print('Called')
+
+```
+
+Now we can call the hook:
+
+```python
+
+>>> capnhook.trigger('hook_name')
+Called
+
+```
 
 
-Licence
-=======
+# Licence
 
 BSD3
 
