@@ -1,6 +1,6 @@
 import pytest
 
-from capnhook import Hook
+from hooky import Hook
 
 @pytest.mark.parametrize('stringify', [str, repr])
 def test_hook_str_repr(stringify):

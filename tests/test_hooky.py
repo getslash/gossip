@@ -1,7 +1,7 @@
 from . import TestCase
-import capnhook
+import hooky
 
 class CaptainhookTest(TestCase):
     #def test(self):
-    #    self.assertEquals(capnhook.something, something_else)
+    #    self.assertEquals(hooky.something, something_else)
     pass

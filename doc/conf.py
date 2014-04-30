@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# capnhook documentation build configuration file, created by
+# hooky documentation build configuration file, created by
 # sphinx-quickstart on Wed Apr 30 23:12:15 2014.
 #
 # This file is execfile()d with the current directory set to its containing dir.
@@ -40,7 +40,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'capnhook'
+project = u'hooky'
 copyright = u'2014, Rotem Yaari'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -48,7 +48,7 @@ copyright = u'2014, Rotem Yaari'
 # built documents.
 #
 # The short X.Y version.
-with open(os.path.join(os.path.dirname(__file__), "..", "capnhook", "__version__.py")) as version_file:
+with open(os.path.join(os.path.dirname(__file__), "..", "hooky", "__version__.py")) as version_file:
     # can't use import here...
     version = release = version_file.read().strip().split("=")[1].strip()[1:-1]
 
@@ -97,7 +97,7 @@ html_theme = 'alabaster'
 html_theme_path = [alabaster.get_path()]
 html_theme_options = {
     'github_user': 'vmalloc',
-    'github_repo': 'capnhook',
+    'github_repo': 'hooky',
 }
 html_sidebars = {
    '**': [
@@ -176,7 +176,7 @@ html_static_path = ['_static']
 #html_file_suffix = None
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'capnhookdoc'
+htmlhelp_basename = 'hookydoc'
 
 
 # -- Options for LaTeX output --------------------------------------------------
@@ -195,7 +195,7 @@ latex_elements = {
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'capnhook.tex', u'capnhook Documentation',
+  ('index', 'hooky.tex', u'hooky Documentation',
    u'Rotem Yaari', 'manual'),
 ]
 
@@ -225,7 +225,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'capnhook', u'capnhook Documentation',
+    ('index', 'hooky', u'hooky Documentation',
      [u'Rotem Yaari'], 1)
 ]
 
@@ -239,8 +239,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  ('index', 'capnhook', u'capnhook Documentation',
-   u'Rotem Yaari', 'capnhook', 'One line description of project.',
+  ('index', 'hooky', u'hooky Documentation',
+   u'Rotem Yaari', 'hooky', 'One line description of project.',
    'Miscellaneous'),
 ]
 
