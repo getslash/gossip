@@ -1,2 +1,2 @@
-from .registry import trigger, register
+from .registry import trigger, register, unregister_all
 from .hook import Hook

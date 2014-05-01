@@ -1,14 +1,19 @@
 import functools
 
+from ._compat import string_types
 from .hook import Hook
 
 _hooks = {}
 
-def register(hook_name, func=None):
-    if func is None:
-        return functools.partial(register, hook_name)
+def register(func, hook_name=None):
+    if isinstance(func, string_types):
+        return functools.partial(register, hook_name=func)
+    assert hook_name is not None
     get_or_create_hook(hook_name).register(func)
     return func
+
+def unregister_all():
+    _hooks.clear()
 
 def trigger(hook_name, **kwargs):
     hook = _hooks.get(hook_name)
