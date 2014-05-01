@@ -28,3 +28,18 @@ After we registered the handler, we can trigger it at any time:
 		Called
 
 
+Unregistering Handlers
+----------------------
+
+Handlers can be easily unregistered by calling ``.gosip.unregister()`` on them:
+
+.. code-block:: python
+
+		>>> func.gossip.unregister()
+
+And you can also unregister all handler on a specific hook:
+
+.. code-block:: python
+
+		>>> gossip.unregister_all('hook_name')
+
