@@ -1,6 +1,6 @@
 import pytest
 
-from hooky import Hook
+from gossip import Hook
 
 @pytest.mark.parametrize('stringify', [str, repr])
 def test_hook_str_repr(stringify):
