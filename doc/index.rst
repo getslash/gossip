@@ -6,10 +6,16 @@
 Welcome to gossip's documentation!
 ====================================
 
+Gossip is a Python library enabling you to define, register and call hooks in various ways.
+
+Hooks can be organized into groups, controlling the behavior of a hook group as a whole.
+
 Contents:
 
 .. toctree::
    :maxdepth: 2
+
+   hooks
 
 
 
