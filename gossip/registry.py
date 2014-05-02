@@ -18,8 +18,9 @@ def register(func, hook_name=None):
     return func
 
 def unregister_all(hook_name=None):
-    for hook in itervalues(_hooks):
-        hook.unregister_all()
+    hook_names = [hook_name] if hook_name is not None else _hooks
+    for name in hook_names:
+        _hooks[name].unregister_all()
 
 def undefine_all():
     _hooks.clear()

@@ -26,9 +26,10 @@ def test_unregister_all(registered_hooks):
     assert all(not r.works() for r in registered_hooks)
 
 def test_unregister_all_specific(registered_hooks):
+    assert all(r.works() for r in registered_hooks)
     gossip.unregister_all(registered_hooks[0].name)
     assert not registered_hooks[0].works()
-    assert all(r.works for r in registered_hooks[1:])
+    assert all(r.works() for r in registered_hooks[1:])
 
 def test_unregister_all_does_not_deletes_group(registered_hooks):
     assert gossip.get_groups()
@@ -39,6 +40,7 @@ def test_undefine_all_deletes_groups(registered_hooks):
     assert gossip.get_groups()
     gossip.undefine_all()
     assert not gossip.get_groups()
+    assert all(not r.works() for r in registered_hooks)
 
 def test_global_group_is_same(registered_hooks):
     global_group = gossip.get_global_group()
