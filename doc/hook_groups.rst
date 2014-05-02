@@ -21,7 +21,7 @@ Groups are implemented as objects (:py:class:`gossip.group.Group`), and can be e
 
 .. code-block:: python
 
-		>>> obj = handle_initialize.gossip.group
+		>>> obj = handle_initialize.gossip.hook.group
 		>>> obj
 		<Gossip group 'myproject'>
 

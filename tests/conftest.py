@@ -8,6 +8,7 @@ hook_id = itertools.count()
 @pytest.fixture(autouse=True, scope="function")
 def clear_registrations():
     gossip.unregister_all()
+    gossip.undefine_all()
 
 @pytest.fixture
 def hook_name():
@@ -19,7 +20,14 @@ def registered_hook(hook_name):
 
 @pytest.fixture
 def registered_hooks():
-    return [RegisteredHook(hook_name()) for i in range(10)]
+    returned = []
+    for i in range(10):
+        if i % 3 == 0:
+            hook_name = "group{0}.hook{1}".format(next(hook_id), next(hook_id))
+        else:
+            hook_name = "hook{0}".format(next(hook_id))
+        returned.append(RegisteredHook(hook_name))
+    return returned
 
 class RegisteredHook(object):
 
@@ -30,11 +38,13 @@ class RegisteredHook(object):
         self.kwargs = {"a": 1, "b": 2, "c": 3}
         self.num_called = 0
 
-        gossip.register(func=self.func, hook_name=hook_name)
+        def handler(**kw):
+            assert kw == self.kwargs
+            self.num_called += 1
 
-    def func(self, **kw):
-        assert kw == self.kwargs
-        self.num_called += 1
+        self.func = handler
+
+        gossip.register(func=handler, hook_name=hook_name)
 
     def works(self):
         old_num_caled = self.num_called

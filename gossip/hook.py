@@ -9,10 +9,11 @@ _logger = logging.getLogger(__name__)
 
 class Hook(object):
 
-    def __init__(self, name, arg_names=(), doc=None):
+    def __init__(self, group, name, arg_names=(), doc=None):
         super(Hook, self).__init__()
+        self.group = group
         self.name = name
-        self._callbacks = []
+        self._registrations = []
         self._arg_names = arg_names
         self._swallow_exceptions = False
         self.doc = doc
@@ -24,11 +25,19 @@ class Hook(object):
         return self.trigger(kwargs)
 
     def register(self, func):
-        self._callbacks.append(Registration(func))
+        self._registrations.append(Registration(func, self))
+
+    def unregister(self, registration):
+        assert registration.hook is self
+        self._registrations.remove(registration)
+        registration.hook = None
+
+    def unregister_all(self):
+        del self._registrations[:]
 
     def trigger(self, kwargs):
         last_exc_info = None
-        for callback in self._callbacks:
+        for callback in self._registrations:
             exc_info = self._call_callback(callback, kwargs)
             if last_exc_info is None:
                 last_exc_info = exc_info
