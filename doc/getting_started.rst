@@ -12,7 +12,6 @@ To register a handler for a hook, just user :py:func:`gossip.register`:
 
 .. code-block:: python
 
-		>>> from __future__ import print_function
 		>>> import gossip
 		
 		
