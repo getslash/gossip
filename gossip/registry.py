@@ -10,6 +10,13 @@ _groups = {
     None: Group("**global**")
 }
 
+def define(hook_name):
+    """Defines a new hook with the given name
+
+    :returns: The :class:`gossip.hook.Hook` object created
+    """
+    return get_or_create_hook(hook_name)
+
 def register(func, hook_name=None):
     """Registers a new function to a hook
 

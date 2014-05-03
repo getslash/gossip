@@ -10,6 +10,10 @@ hook_id = itertools.count()
 def clear_registrations():
     gossip.registry.undefine_all()
 
+@pytest.fixture(autouse=True, scope="function")
+def reset_global_group():
+    gossip.get_global_group().reset()
+
 @pytest.fixture
 def hook_name():
     return "hook{0}".format(next(hook_id))

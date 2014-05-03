@@ -30,7 +30,7 @@ After we registered the handler, we can trigger it at any time:
 Unregistering Handlers
 ----------------------
 
-Handlers can be easily unregistered by calling ``.gosip.unregister()`` on them:
+Handlers can be easily unregistered by calling ``.gossip.unregister()`` on them:
 
 .. code-block:: python
 
@@ -43,3 +43,18 @@ And you can also unregister all handler on a specific hook:
 		>>> import gossip.registry
 		>>> gossip.registry.unregister_all('hook_name')
 
+
+Explicit vs. Implicit Definition of Hooks
+-----------------------------------------
+
+By default, registering hooks in with :func:`gossip.register` takes care of hook definition and registration at the same time. In several cases, however, you may want to simply define a hook, but not register anything to it yet. For this we have the :func:`gossip.define` API:
+
+.. code-block:: python
+
+		>>> import gossip
+		>>> hook = gossip.define('hook_name')
+		>>> @hook.register
+		... def handler():
+		...     pass
+
+The :func:`gossip.register` returns the :class:`gossip.hook.Hook` object for the defined hook, so further operations can be executed against it.

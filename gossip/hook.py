@@ -25,6 +25,8 @@ class Hook(object):
         return self.trigger(kwargs)
 
     def register(self, func):
+        """Registers a new handler to this hook
+        """
         self._registrations.append(Registration(func, self))
 
     def unregister(self, registration):
@@ -36,15 +38,13 @@ class Hook(object):
         del self._registrations[:]
 
     def trigger(self, kwargs):
-        last_exc_info = None
-        for callback in self._registrations:
-            exc_info = self._call_callback(callback, kwargs)
-            if last_exc_info is None:
-                last_exc_info = exc_info
+        exception_policy = self.group.get_exception_policy()
 
-        if last_exc_info and not self._swallow_exceptions:
-            _logger.debug("Reraising first exception in callback")
-            reraise(*last_exc_info)  # pylint: disable=W0142
+        with exception_policy.context() as ctx:
+            for callback in self._registrations:
+                exc_info = self._call_callback(callback, kwargs)
+                if exc_info is not None:
+                    exception_policy.handle_exception(ctx, exc_info)
 
     def _call_callback(self, callback, kwargs):
         exc_info = None
