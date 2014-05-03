@@ -11,6 +11,12 @@ _groups = {
 }
 
 def register(func, hook_name=None):
+    """Registers a new function to a hook
+
+    :param hook_name: full name of hook to register to
+    :returns: The function (for decorator chaining)
+
+    """
     if isinstance(func, string_types):
         return functools.partial(register, hook_name=func)
     assert hook_name is not None
@@ -30,6 +36,9 @@ def undefine_all():
     global_group.remove_all_children()
 
 def trigger(hook_name, **kwargs):
+    """Triggers a hook by name, causing all of its handlers to be called
+    """
+    
     hook = _hooks.get(hook_name)
     if hook is not None:
         hook.trigger(kwargs)

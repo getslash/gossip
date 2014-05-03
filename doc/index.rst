@@ -18,6 +18,7 @@ Contents:
    getting_started
    arguments
    hook_groups
+   api
 
 
 

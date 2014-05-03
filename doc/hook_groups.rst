@@ -27,7 +27,7 @@ Groups are implemented as objects (:py:class:`gossip.group.Group`), and can be e
 
 It can also be accessed globally:
 
-.. clode-block:: python
+.. code-block:: python
 
 		 >>> gossip.get_group_by_name("myproject")
 		 <Gossip group 'myproject'>

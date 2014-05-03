@@ -8,3 +8,4 @@ Hook Registration
 
 .. autofunction:: gossip.registry.register
 
+.. autofunction:: gossip.registry.trigger
