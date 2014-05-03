@@ -1,4 +1,5 @@
 import gossip
+from gossip import registry as gossip_registry
 import pytest
 from gossip.exceptions import NameAlreadyUsed
 
@@ -20,31 +21,27 @@ def test_unregister(registered_hook):
     registered_hook.func.gossip.unregister()
     assert not registered_hook.works()
 
-def test_unregister_all(registered_hooks):
+def test_unregister_all_on_hook(registered_hooks):
     assert all(r.works() for r in registered_hooks)
-    gossip.unregister_all()
-    assert all(not r.works() for r in registered_hooks)
-
-def test_unregister_all_specific(registered_hooks):
-    assert all(r.works() for r in registered_hooks)
-    gossip.unregister_all(registered_hooks[0].name)
+    gossip_registry.unregister_all(registered_hooks[0].name)
     assert not registered_hooks[0].works()
     assert all(r.works() for r in registered_hooks[1:])
 
 def test_unregister_all_does_not_deletes_group(registered_hooks):
     assert gossip.get_groups()
-    gossip.unregister_all()
+    for h in registered_hooks:
+        gossip_registry.unregister_all(h.name)
     assert gossip.get_groups()
 
 def test_undefine_all_deletes_groups(registered_hooks):
     assert gossip.get_groups()
-    gossip.undefine_all()
+    gossip_registry.undefine_all()
     assert not gossip.get_groups()
     assert all(not r.works() for r in registered_hooks)
 
 def test_global_group_is_same(registered_hooks):
     global_group = gossip.get_global_group()
-    gossip.unregister_all()
+    gossip_registry.undefine_all()
     assert gossip.get_global_group() is global_group
 
 def test_hook_name_taken_by_group():

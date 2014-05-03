@@ -23,12 +23,20 @@ def register(func, hook_name=None):
     get_or_create_hook(hook_name).register(func)
     return func
 
-def unregister_all(hook_name=None):
-    hook_names = [hook_name] if hook_name is not None else _hooks
-    for name in hook_names:
-        _hooks[name].unregister_all()
+def unregister_all(hook_name):
+    """
+    Unregisters all handlers from the given hook name
+    """
+    if hook_name in _hooks:
+        _hooks[hook_name].unregister_all()
 
 def undefine_all():
+    """
+    Undefines all defined hooks and groups
+
+    .. attention: this is a dangerous operation - it affects all defined hooks of all namespaces, and should only
+      be invoked if nothing else in your program relies on gossip
+    """
     _hooks.clear()
     global_group = get_global_group()
     _groups.clear()

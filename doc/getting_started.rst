@@ -40,5 +40,6 @@ And you can also unregister all handler on a specific hook:
 
 .. code-block:: python
 
-		>>> gossip.unregister_all('hook_name')
+		>>> import gossip.registry
+		>>> gossip.registry.unregister_all('hook_name')
 
