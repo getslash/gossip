@@ -6,3 +6,4 @@ build
 flycheck-*
 dist
 .env
+.DS_Store

@@ -96,6 +96,7 @@ import alabaster
 html_theme = 'alabaster'
 html_theme_path = [alabaster.get_path()]
 html_theme_options = {
+    'logo': 'gossip-small.png',
     'github_user': 'vmalloc',
     'github_repo': 'gossip',
 }
