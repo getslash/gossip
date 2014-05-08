@@ -23,6 +23,14 @@ Error Handling
 
 .. autofunction:: gossip.set_exception_policy
 
+.. autoclass:: gossip.exception_policy.RaiseImmediately
+
+.. autoclass:: gossip.exception_policy.RaiseDefer
+
+.. autoclass:: gossip.exception_policy.IgnoreExceptions
+
+.. autoclass:: gossip.exception_policy.Inherit
+
 Hook Unregistration
 -------------------
 
