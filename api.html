@@ -1,0 +1,259 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>API Reference &mdash; gossip 0.1.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="gossip 0.1.0 documentation" href="index.html" />
+    <link rel="prev" title="Exception Handling Policies" href="error_handling.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="error_handling.html" title="Exception Handling Policies"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">gossip 0.1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-gossip">
+<span id="api-reference"></span><h1>API Reference<a class="headerlink" href="#module-gossip" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="hook-definition">
+<h2>Hook Definition<a class="headerlink" href="#hook-definition" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="gossip.define">
+<tt class="descclassname">gossip.</tt><tt class="descname">define</tt><big>(</big><em>hook_name</em><big>)</big><a class="headerlink" href="#gossip.define" title="Permalink to this definition">¶</a></dt>
+<dd><p>Defines a new hook with the given name</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The <a class="reference internal" href="#gossip.hook.Hook" title="gossip.hook.Hook"><tt class="xref py py-class docutils literal"><span class="pre">gossip.hook.Hook</span></tt></a> object created</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="hook-registration">
+<h2>Hook Registration<a class="headerlink" href="#hook-registration" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="gossip.register">
+<tt class="descclassname">gossip.</tt><tt class="descname">register</tt><big>(</big><em>func</em>, <em>hook_name=None</em><big>)</big><a class="headerlink" href="#gossip.register" title="Permalink to this definition">¶</a></dt>
+<dd><p>Registers a new function to a hook</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>hook_name</strong> &#8211; full name of hook to register to</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The function (for decorator chaining)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="hook-triggering">
+<h2>Hook Triggering<a class="headerlink" href="#hook-triggering" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="gossip.trigger">
+<tt class="descclassname">gossip.</tt><tt class="descname">trigger</tt><big>(</big><em>hook_name</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#gossip.trigger" title="Permalink to this definition">¶</a></dt>
+<dd><p>Triggers a hook by name, causing all of its handlers to be called</p>
+</dd></dl>
+
+</div>
+<div class="section" id="error-handling">
+<h2>Error Handling<a class="headerlink" href="#error-handling" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="gossip.set_exception_policy">
+<tt class="descclassname">gossip.</tt><tt class="descname">set_exception_policy</tt><big>(</big><em>policy</em><big>)</big><a class="headerlink" href="#gossip.set_exception_policy" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is a shortcut to calling <a class="reference internal" href="#gossip.group.Group.set_exception_policy" title="gossip.group.Group.set_exception_policy"><tt class="xref py py-func docutils literal"><span class="pre">gossip.group.Group.set_exception_policy()</span></tt></a> on the global
+hook group</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="gossip.exception_policy.RaiseImmediately">
+<em class="property">class </em><tt class="descclassname">gossip.exception_policy.</tt><tt class="descname">RaiseImmediately</tt><a class="headerlink" href="#gossip.exception_policy.RaiseImmediately" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="gossip.exception_policy.RaiseDefer">
+<em class="property">class </em><tt class="descclassname">gossip.exception_policy.</tt><tt class="descname">RaiseDefer</tt><a class="headerlink" href="#gossip.exception_policy.RaiseDefer" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="gossip.exception_policy.IgnoreExceptions">
+<em class="property">class </em><tt class="descclassname">gossip.exception_policy.</tt><tt class="descname">IgnoreExceptions</tt><a class="headerlink" href="#gossip.exception_policy.IgnoreExceptions" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="gossip.exception_policy.Inherit">
+<em class="property">class </em><tt class="descclassname">gossip.exception_policy.</tt><tt class="descname">Inherit</tt><a class="headerlink" href="#gossip.exception_policy.Inherit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-gossip.registry">
+<span id="hook-unregistration"></span><h2>Hook Unregistration<a class="headerlink" href="#module-gossip.registry" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="gossip.registry.unregister_all">
+<tt class="descclassname">gossip.registry.</tt><tt class="descname">unregister_all</tt><big>(</big><em>hook_name</em><big>)</big><a class="headerlink" href="#gossip.registry.unregister_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Unregisters all handlers from the given hook name</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="gossip.registry.undefine_all">
+<tt class="descclassname">gossip.registry.</tt><tt class="descname">undefine_all</tt><big>(</big><big>)</big><a class="headerlink" href="#gossip.registry.undefine_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Undefines all defined hooks and groups</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-gossip.hook">
+<span id="hook-objects"></span><h2>Hook Objects<a class="headerlink" href="#module-gossip.hook" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="gossip.hook.Hook">
+<em class="property">class </em><tt class="descclassname">gossip.hook.</tt><tt class="descname">Hook</tt><big>(</big><em>group</em>, <em>name</em>, <em>arg_names=()</em>, <em>doc=None</em><big>)</big><a class="headerlink" href="#gossip.hook.Hook" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="gossip.hook.Hook.register">
+<tt class="descname">register</tt><big>(</big><em>func</em><big>)</big><a class="headerlink" href="#gossip.hook.Hook.register" title="Permalink to this definition">¶</a></dt>
+<dd><p>Registers a new handler to this hook</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-gossip.group">
+<span id="hook-groups"></span><h2>Hook Groups<a class="headerlink" href="#module-gossip.group" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="gossip.group.Group">
+<em class="property">class </em><tt class="descclassname">gossip.group.</tt><tt class="descname">Group</tt><big>(</big><em>name</em>, <em>parent=None</em><big>)</big><a class="headerlink" href="#gossip.group.Group" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="gossip.group.Group.get_exception_policy">
+<tt class="descname">get_exception_policy</tt><big>(</big><big>)</big><a class="headerlink" href="#gossip.group.Group.get_exception_policy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the current exception policy to be used by this group</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="gossip.group.Group.set_exception_policy">
+<tt class="descname">set_exception_policy</tt><big>(</big><em>policy</em><big>)</big><a class="headerlink" href="#gossip.group.Group.set_exception_policy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determines how exceptions are handled by hooks in this group</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="index.html">
+    <img class="logo" src="_static/gossip-small.png" alt="Logo"/>
+    
+  </a>
+</p>
+
+
+
+
+
+<p>
+<iframe src="http://ghbtns.com/github-btn.html?user=vmalloc&repo=gossip&type=watch&count=true&size=large"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="arguments.html">Hook Arguments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hook_groups.html">Hook Groups</a></li>
+<li class="toctree-l1"><a class="reference internal" href="error_handling.html">Exception Handling Policies</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#hook-definition">Hook Definition</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#hook-registration">Hook Registration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#hook-triggering">Hook Triggering</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#error-handling">Error Handling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-gossip.registry">Hook Unregistration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-gossip.hook">Hook Objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-gossip.group">Hook Groups</a></li>
+</ul>
+</li>
+</ul>
+
+
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2014, Rotem Yaari.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.1.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.6.0</a>
+      
+      |
+      <a href="_sources/api.txt"
+          rel="nofollow">Page source</a></li>
+    </div>
+
+    
+
+    
+  </body>
+</html>

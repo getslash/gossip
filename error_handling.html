@@ -1,0 +1,156 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Exception Handling Policies &mdash; gossip 0.1.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="gossip 0.1.0 documentation" href="index.html" />
+    <link rel="next" title="API Reference" href="api.html" />
+    <link rel="prev" title="Hook Groups" href="hook_groups.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="api.html" title="API Reference"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="hook_groups.html" title="Hook Groups"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">gossip 0.1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="exception-handling-policies">
+<h1>Exception Handling Policies<a class="headerlink" href="#exception-handling-policies" title="Permalink to this headline">¶</a></h1>
+<p>When an exception propagates outside of a hook handler, the hook group decides what to do according to its <em>exception propagation strategy</em>.</p>
+<div class="section" id="setting-the-active-policy">
+<h2>Setting the Active Policy<a class="headerlink" href="#setting-the-active-policy" title="Permalink to this headline">¶</a></h2>
+<p>Setting the strategy is done with the <a class="reference internal" href="api.html#gossip.set_exception_policy" title="gossip.set_exception_policy"><tt class="xref py py-func docutils literal"><span class="pre">gossip.set_exception_policy()</span></tt></a> function:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">gossip</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gossip</span><span class="o">.</span><span class="n">set_exception_policy</span><span class="p">(</span><span class="n">gossip</span><span class="o">.</span><span class="n">RaiseDefer</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gossip</span><span class="o">.</span><span class="n">set_exception_policy</span><span class="p">(</span><span class="n">gossip</span><span class="o">.</span><span class="n">RaiseImmediately</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gossip</span><span class="o">.</span><span class="n">set_exception_policy</span><span class="p">(</span><span class="n">gossip</span><span class="o">.</span><span class="n">IgnoreExceptions</span><span class="p">())</span>
+</pre></div>
+</div>
+<p>The policy can be changed per each hook group. The default is to inherit the behavior of the parent group. <a class="reference internal" href="api.html#gossip.set_exception_policy" title="gossip.set_exception_policy"><tt class="xref py py-func docutils literal"><span class="pre">gossip.set_exception_policy()</span></tt></a> is merely an alias for <a class="reference internal" href="api.html#gossip.group.Group.set_exception_policy" title="gossip.group.Group.set_exception_policy"><tt class="xref py py-func docutils literal"><span class="pre">gossip.group.Group.set_exception_policy()</span></tt></a>.</p>
+</div>
+<div class="section" id="available-exception-handling-policies">
+<h2>Available Exception Handling Policies<a class="headerlink" href="#available-exception-handling-policies" title="Permalink to this headline">¶</a></h2>
+<p>The possible strategies that <a class="reference internal" href="api.html#gossip.set_exception_policy" title="gossip.set_exception_policy"><tt class="xref py py-func docutils literal"><span class="pre">gossip.set_exception_policy()</span></tt></a> can receive are:</p>
+<ul class="simple">
+<li><a class="reference internal" href="api.html#gossip.exception_policy.RaiseImmediately" title="gossip.exception_policy.RaiseImmediately"><tt class="xref py py-class docutils literal"><span class="pre">gossip.RaiseImmediately()</span></tt></a>: Raise upon the first exception encountered. <strong>This is the default behavior for the global group</strong>, and causes handlers to be skipped upon error.</li>
+<li><a class="reference internal" href="api.html#gossip.exception_policy.RaiseDefer" title="gossip.exception_policy.RaiseDefer"><tt class="xref py py-class docutils literal"><span class="pre">gossip.RaiseDefer()</span></tt></a>: Call all handlers, but raise the first exception encountered. This swallows intermediate errors, but at least tries to call as many handlers as possible.</li>
+<li><a class="reference internal" href="api.html#gossip.exception_policy.IgnoreExceptions" title="gossip.exception_policy.IgnoreExceptions"><tt class="xref py py-class docutils literal"><span class="pre">gossip.IgnoreExceptions()</span></tt></a>: This does nothing upon encountering errors, and calls all handlers always.</li>
+<li><a class="reference internal" href="api.html#gossip.exception_policy.Inherit" title="gossip.exception_policy.Inherit"><tt class="xref py py-class docutils literal"><span class="pre">gossip.Inherit()</span></tt></a>: Takes the policy from the group&#8217;s parent. You cannot set this policy for the global group, as it has no parent. <strong>This is the default behavior for non-global groups</strong>.</li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="index.html">
+    <img class="logo" src="_static/gossip-small.png" alt="Logo"/>
+    
+  </a>
+</p>
+
+
+
+
+
+<p>
+<iframe src="http://ghbtns.com/github-btn.html?user=vmalloc&repo=gossip&type=watch&count=true&size=large"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="arguments.html">Hook Arguments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hook_groups.html">Hook Groups</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Exception Handling Policies</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#setting-the-active-policy">Setting the Active Policy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#available-exception-handling-policies">Available Exception Handling Policies</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a></li>
+</ul>
+
+
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2014, Rotem Yaari.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.1.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.6.0</a>
+      
+      |
+      <a href="_sources/error_handling.txt"
+          rel="nofollow">Page source</a></li>
+    </div>
+
+    
+
+    
+  </body>
+</html>
