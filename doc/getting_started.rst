@@ -52,9 +52,20 @@ By default, registering hooks in with :func:`gossip.register` takes care of hook
 .. code-block:: python
 
 		>>> import gossip
-		>>> hook = gossip.define('hook_name')
+		>>> hook = gossip.define('hook_name_here')
 		>>> @hook.register
 		... def handler():
 		...     pass
 
 The :func:`gossip.register` returns the :class:`gossip.hook.Hook` object for the defined hook, so further operations can be executed against it.
+
+Hooks cannot be ``define``d more than once:
+
+.. code-block:: python
+
+		>>> import gossip
+		>>> hook = gossip.define('some_hook')
+		>>> gossip.define('some_hook') # doctest: +IGNORE_EXCEPTION_DETAIL
+		Traceback (most recent call last):
+		   ...
+		NameAlreadyUsed: ...

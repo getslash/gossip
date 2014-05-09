@@ -7,6 +7,11 @@ from gossip.exceptions import NameAlreadyUsed
 def test_register_trigger(registered_hook):
     assert registered_hook.works()
 
+def test_define_twice(hook_name):
+    hook = gossip.define(hook_name)
+    with pytest.raises(NameAlreadyUsed):
+        gossip.define(hook_name)
+
 def test_register_function_already_has_gossip_attr(hook_name):
     def func():
         pass
