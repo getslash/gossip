@@ -1,3 +1,5 @@
+from munch import Munch
+
 import gossip
 import pytest
 from gossip.exception_policy import Inherit
@@ -5,23 +7,64 @@ from gossip.exception_policy import Inherit
 from .conftest import RegisteredHook
 
 
+def test_exception_from_internal_hook(registered_hook):
+    registered_hook.fail_when_called()
+    called = Munch(count=0)
+
+    @gossip.register("gossip.on_handler_exception")
+    def handle_exception(handler, exception):
+        called.count += 1
+        raise CustomException()
+
+    with pytest.raises(CustomException):
+        registered_hook.trigger()
+
+    assert called.count == 1
+
+
+class CustomException(Exception):
+    pass
+
+
+def test_gossip_exception_caught_hook(registered_hook):
+    registered_hook.fail_when_called()
+    error = Munch(caught=False)
+
+    @gossip.register("gossip.on_handler_exception")
+    def handle_exception(handler, exception):
+        assert handler is registered_hook.func
+        assert exception[0] is registered_hook.exception_class
+        assert isinstance(exception[1], registered_hook.exception_class)
+        error.caught = True
+
+    with pytest.raises(registered_hook.exception_class):
+        registered_hook.trigger()
+
+    assert error.caught
+
+
 @pytest.mark.parametrize("invalid_policy", [object(), 1, None, gossip.RaiseImmediately])
 def test_cannot_set_invalid_policy(invalid_policy):
     with pytest.raises(ValueError):
         gossip.set_exception_policy(invalid_policy)
 
+
 def test_global_cannot_be_inherit():
     with pytest.raises(RuntimeError):
         gossip.set_exception_policy(Inherit())
 
+
 def test_default_global_group_policy():
-    assert isinstance(gossip.get_global_group().get_exception_policy(), gossip.RaiseImmediately)
+    assert isinstance(gossip.get_global_group()
+                      .get_exception_policy(), gossip.RaiseImmediately)
+
 
 def test_inherit_policy(exception_handling_policy):
     group = gossip.group.Group("some_group", parent=gossip.get_global_group())
     gossip.set_exception_policy(exception_handling_policy)
     group.set_exception_policy(Inherit())
     assert group.get_exception_policy() is exception_handling_policy
+
 
 def test_inherit_policy_changing_parent():
     gossip.define("group.hook")
@@ -30,15 +73,18 @@ def test_inherit_policy_changing_parent():
         gossip.set_exception_policy(policy)
         assert group.get_exception_policy() is policy
 
+
 def test_group_returns_to_default_after_reset():
     gossip.get_global_group().set_exception_policy(gossip.IgnoreExceptions())
     gossip.get_global_group().reset()
     test_default_global_group_policy()
 
+
 def test_get_exception_policy(exception_handling_policy):
     group = gossip.group.Group("some_group", parent=gossip.get_global_group())
     group.set_exception_policy(exception_handling_policy)
     assert group.get_exception_policy() is exception_handling_policy
+
 
 def test_exception_handling(hook, error_prone_handlers, exception_handling_policy):
     hook.group.set_exception_policy(exception_handling_policy)
@@ -50,12 +96,15 @@ def test_exception_handling(hook, error_prone_handlers, exception_handling_polic
 
     assert error_prone_handlers[0].called
     for handler in error_prone_handlers[1:]:
-        assert handler.called == (not isinstance(exception_handling_policy, gossip.RaiseImmediately))
+        assert handler.called == (
+            not isinstance(exception_handling_policy, gossip.RaiseImmediately))
+
 
 @pytest.fixture(
     params=[gossip.RaiseDefer, gossip.RaiseImmediately, gossip.IgnoreExceptions])
 def exception_handling_policy(request):
     return request.param()
+
 
 @pytest.fixture
 def error_prone_handlers(hook_name):
