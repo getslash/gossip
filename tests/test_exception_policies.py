@@ -1,6 +1,8 @@
 import gossip
-from gossip.exception_policy import Inherit
 import pytest
+from gossip.exception_policy import Inherit
+
+from .conftest import RegisteredHook
 
 
 @pytest.mark.parametrize("invalid_policy", [object(), 1, None, gossip.RaiseImmediately])
@@ -38,15 +40,14 @@ def test_get_exception_policy(exception_handling_policy):
     group.set_exception_policy(exception_handling_policy)
     assert group.get_exception_policy() is exception_handling_policy
 
-def test_exception_handling(error_handling_hook, error_prone_handlers, exception_handling_policy):
-    error_handling_hook.group.set_exception_policy(exception_handling_policy)
+def test_exception_handling(hook, error_prone_handlers, exception_handling_policy):
+    hook.group.set_exception_policy(exception_handling_policy)
     if isinstance(exception_handling_policy, gossip.IgnoreExceptions):
-        error_handling_hook()
+        hook(**error_prone_handlers[0].kwargs)
     else:
-        with pytest.raises(HandlerException) as error:
-            error_handling_hook()
+        with pytest.raises(error_prone_handlers[0].exception_class):
+            hook(**error_prone_handlers[0].kwargs)
 
-        assert error.value.args[0] is error_prone_handlers[0]
     assert error_prone_handlers[0].called
     for handler in error_prone_handlers[1:]:
         assert handler.called == (not isinstance(exception_handling_policy, gossip.RaiseImmediately))
@@ -57,39 +58,13 @@ def exception_handling_policy(request):
     return request.param()
 
 @pytest.fixture
-def error_handling_hook(hook_name):
-    return gossip.define(hook_name)
-
-@pytest.fixture
-def error_prone_handlers(error_handling_hook):
+def error_prone_handlers(hook_name):
     returned = []
     num_handlers = 10
     for handler_index in range(num_handlers):
-        handler = ErrorProneHandler()
+        handler = RegisteredHook(hook_name)
         if handler_index in (0, 5, num_handlers - 1):
             handler.fail_when_called()
         returned.append(handler)
-        error_handling_hook.register(returned[-1].func)
 
     return returned
-
-class ErrorProneHandler(object):
-
-    def __init__(self):
-        super(ErrorProneHandler, self).__init__()
-
-        self.called = False
-        self._fail = False
-
-        def func():
-            self.called = True
-            if self._fail:
-                raise HandlerException(self)
-
-        self.func = func
-
-    def fail_when_called(self):
-        self._fail = True
-
-class HandlerException(Exception):
-    pass
