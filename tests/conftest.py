@@ -71,5 +71,9 @@ class RegisteredHook(object):
 
     def works(self):
         old_num_caled = self.num_called
-        gossip.trigger(self.name, **self.kwargs)
+        self.trigger()
         return self.num_called == old_num_caled + 1
+
+    def trigger(self):
+        gossip.trigger(self.name, **self.kwargs)
+

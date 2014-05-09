@@ -9,7 +9,14 @@ class Group(object):
         super(Group, self).__init__()
         self.name = name
         self._parent = parent
+        if self._parent is not None and not self._parent.is_global():
+            self.full_name = "{0}.{1}".format(self._parent.full_name, self.name)
+        else:
+            self.full_name = name
         self.reset()
+
+    def is_global(self):
+        return self._parent is None
 
     def reset(self):
         self._hooks = {}

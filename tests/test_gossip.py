@@ -8,9 +8,15 @@ def test_register_trigger(registered_hook):
     assert registered_hook.works()
 
 def test_define_twice(hook_name):
-    hook = gossip.define(hook_name)
+    gossip.define(hook_name)
     with pytest.raises(NameAlreadyUsed):
         gossip.define(hook_name)
+
+def test_get_hook(hook_name):
+    with pytest.raises(LookupError):
+        gossip.get_hook(hook_name)
+    hook = gossip.define(hook_name)
+    assert gossip.get_hook(hook_name) is hook
 
 def test_register_function_already_has_gossip_attr(hook_name):
     def func():

@@ -1,7 +1,7 @@
 import functools
 
 from ._compat import iteritems, itervalues, string_types
-from .exceptions import NameAlreadyUsed
+from .exceptions import NameAlreadyUsed, HookNotFound
 from .group import Group
 
 _hooks = {}
@@ -9,7 +9,6 @@ _hooks = {}
 _groups = {
     None: Group("**global**")
 }
-
 
 def define(hook_name):
     """Defines a new hook with the given name
@@ -54,7 +53,6 @@ def undefine_all():
     _groups[None] = global_group
     global_group.remove_all_children()
 
-
 def trigger(hook_name, **kwargs):
     """Triggers a hook by name, causing all of its handlers to be called
     """
@@ -65,10 +63,20 @@ def trigger(hook_name, **kwargs):
 
 
 def get_or_create_hook(hook_name):
-    returned = _hooks.get(hook_name)
-    if returned is None:
-        returned = _hooks[hook_name] = create_hook(hook_name)
-    return returned
+    try:
+        return get_hook(hook_name)
+    except HookNotFound:
+        return create_hook(hook_name)
+
+def get_hook(hook_name):
+    """Gets a hook by its name
+
+    :raises: :class:`gossip.exceptions.HookNotFound` if the hook wasn't defined already
+    """
+    try:
+        return _hooks[hook_name]
+    except KeyError:
+        raise HookNotFound("Hook {0} does not exist".format(hook_name))
 
 
 def create_hook(hook_name):

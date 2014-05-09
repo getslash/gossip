@@ -8,6 +8,8 @@ Hook Definition
 
 .. autofunction:: gossip.define
 
+.. autofunction:: gossip.get_hook
+
 Hook Registration
 -----------------
 
@@ -55,3 +57,12 @@ Hook Groups
 
 .. autoclass:: gossip.group.Group
   :members:
+
+Exceptions
+----------
+
+.. automodule:: gossip.exceptions
+
+.. autoclass:: HookNotFound
+
+.. autoclass:: NameAlreadyUsed

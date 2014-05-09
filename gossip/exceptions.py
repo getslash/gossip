@@ -1,8 +1,8 @@
 class HookException(Exception):
     pass
 
-class RequirementsNotMet(HookException):
+class NameAlreadyUsed(HookException):
     pass
 
-class NameAlreadyUsed(HookException):
+class HookNotFound(LookupError):
     pass

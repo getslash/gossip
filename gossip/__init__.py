@@ -1,7 +1,7 @@
 from .hook import Hook
 from .exception_policy import (
     RaiseDefer, RaiseImmediately, IgnoreExceptions)
-from .registry import (get_global_group, get_group_by_name, get_groups, define,
+from .registry import (get_global_group, get_hook, get_group_by_name, get_groups, define,
                        register, trigger)
 
 

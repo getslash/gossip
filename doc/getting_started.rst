@@ -69,3 +69,23 @@ Hooks cannot be ``define``d more than once:
 		Traceback (most recent call last):
 		   ...
 		NameAlreadyUsed: ...
+
+Getting Hooks by Name
+---------------------
+
+Once a hook is defined you can get the underlying :class:`gossip.hook.Hook` object by using :func:`gossip.get_hook`:
+
+.. code-block:: python
+
+		>>> gossip.get_hook('some_hook')
+		<Hook some_hook()>
+
+However, in this way the hook is never defined for you:
+
+.. code-block:: python
+
+		>>> gossip.get_hook('nonexisting_hook') # doctest: +IGNORE_EXCEPTION_DETAIL
+		Traceback (most recent call last):
+		   ...
+		HookNotFound: ...
+		

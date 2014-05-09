@@ -13,9 +13,14 @@ class Hook(object):
         super(Hook, self).__init__()
         self.group = group
         self.name = name
+        if self.group.is_global():
+            self.full_name = name
+        else:
+            self.full_name = "{0}.{1}".format(self.group.full_name, self.name)
         self._registrations = []
         self._arg_names = arg_names
         self._swallow_exceptions = False
+        self._trigger_internal_hooks = self.full_name != "gossip.on_handler_exception"
         self.doc = doc
 
     def get_argument_names(self):
@@ -41,21 +46,25 @@ class Hook(object):
         exception_policy = self.group.get_exception_policy()
 
         with exception_policy.context() as ctx:
-            for callback in self._registrations:
-                exc_info = self._call_callback(callback, kwargs)
+            for registration in self._registrations:
+                exc_info = self._call_registration(registration, kwargs)
                 if exc_info is not None:
                     exception_policy.handle_exception(ctx, exc_info)
 
-    def _call_callback(self, callback, kwargs):
+    def _call_registration(self, registration, kwargs):
         exc_info = None
         try:
-            callback(**kwargs)  # pylint: disable=star-args
+            registration(**kwargs)  # pylint: disable=star-args
         except:
             exc_info = sys.exc_info()
+            if self._trigger_internal_hooks:
+                trigger("gossip.on_handler_exception", handler=registration.func, exception=exc_info)
             _logger.warn("Exception occurred while calling %s",
-                         callback, exc_info=exc_info)
+                         registration, exc_info=exc_info)
             # TODO: debug here
         return exc_info
 
     def __repr__(self):
         return "<Hook {0}({1})>".format(self.name, ", ".join(self._arg_names))
+
+from .registry import trigger
