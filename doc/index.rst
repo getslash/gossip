@@ -3,8 +3,8 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to gossip's documentation!
-====================================
+Welcome - Gossip |release| Docs
+================================
 
 Gossip is a Python library enabling you to define, register and call hooks in various ways.
 
