@@ -1,8 +1,8 @@
 import logging
 import sys
 
-from ._compat import reraise
 from .registration import Registration
+from .exceptions import NotNowException
 
 _logger = logging.getLogger(__name__)
 
@@ -45,16 +45,31 @@ class Hook(object):
     def trigger(self, kwargs):
         exception_policy = self.group.get_exception_policy()
 
+        registrations = self._registrations
+        deferred = []
+
         with exception_policy.context() as ctx:
-            for registration in self._registrations:
-                exc_info = self._call_registration(registration, kwargs)
-                if exc_info is not None:
-                    exception_policy.handle_exception(ctx, exc_info)
+            while True:
+                for registration in registrations:
+                    try:
+                        exc_info = self._call_registration(registration, kwargs)
+                    except NotNowException:
+                        deferred.append(registration)
+                        continue
+                    if exc_info is not None:
+                        exception_policy.handle_exception(ctx, exc_info)
+                if deferred:
+                    registrations = deferred
+                    deferred = []
+                else:
+                    break
 
     def _call_registration(self, registration, kwargs):
         exc_info = None
         try:
             registration(**kwargs)  # pylint: disable=star-args
+        except NotNowException:
+            raise
         except:
             exc_info = sys.exc_info()
             if self._trigger_internal_hooks:

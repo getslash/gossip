@@ -6,3 +6,6 @@ class NameAlreadyUsed(HookException):
 
 class HookNotFound(LookupError):
     pass
+
+class NotNowException(Exception):
+    pass

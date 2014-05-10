@@ -37,6 +37,8 @@ def registered_hooks():
         returned.append(RegisteredHook(hook_name))
     return returned
 
+timestamp = itertools.count()
+
 class RegisteredHook(object):
 
     def __init__(self, hook_name):
@@ -55,6 +57,7 @@ class RegisteredHook(object):
         def handler(**kw):
             assert kw == self.kwargs
             self.num_called += 1
+            self.last_timestamp = next(timestamp)
             if self._fail:
                 raise self.exception_class()
 

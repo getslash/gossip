@@ -19,6 +19,7 @@ Contents:
    arguments
    hook_groups
    error_handling
+   hook_dependencies
    api
 
 
