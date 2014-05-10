@@ -59,7 +59,7 @@ By default, registering hooks in with :func:`gossip.register` takes care of hook
 
 The :func:`gossip.register` returns the :class:`gossip.hook.Hook` object for the defined hook, so further operations can be executed against it.
 
-Hooks cannot be ``define``d more than once:
+Hooks cannot be ``define``-d more than once:
 
 .. code-block:: python
 

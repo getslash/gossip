@@ -33,6 +33,14 @@ Error Handling
 
 .. autoclass:: gossip.exception_policy.Inherit
 
+Hook Dependency
+---------------
+
+.. autofunction:: gossip.not_now
+
+.. autofunction:: gossip.wait_for
+
+
 Hook Unregistration
 -------------------
 
@@ -66,3 +74,5 @@ Exceptions
 .. autoclass:: HookNotFound
 
 .. autoclass:: NameAlreadyUsed
+
+

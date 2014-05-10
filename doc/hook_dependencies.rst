@@ -65,7 +65,7 @@ Gossip offers a few helper functions to assist with dependency resolution. These
 wait_for
 ~~~~~~~~
 
-:func:`gossip.wait_for` receives a boolean expression and defers execution if it is ``False``y:
+:func:`gossip.wait_for` receives a boolean expression and defers execution if it is ``False``-y:
 
 .. code-block:: python
 
