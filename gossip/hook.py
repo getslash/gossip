@@ -2,7 +2,7 @@ import logging
 import sys
 
 from .registration import Registration
-from .exceptions import NotNowException
+from .exceptions import NotNowException, CannotResolveDependencies
 
 _logger = logging.getLogger(__name__)
 
@@ -50,15 +50,20 @@ class Hook(object):
 
         with exception_policy.context() as ctx:
             while True:
+                any_resolved = False
                 for registration in registrations:
                     try:
                         exc_info = self._call_registration(registration, kwargs)
                     except NotNowException:
                         deferred.append(registration)
                         continue
+                    else:
+                        any_resolved = True
                     if exc_info is not None:
                         exception_policy.handle_exception(ctx, exc_info)
                 if deferred:
+                    if not any_resolved:
+                        raise CannotResolveDependencies("Cannot resolve handler dependencies")
                     registrations = deferred
                     deferred = []
                 else:

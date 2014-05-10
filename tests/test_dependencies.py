@@ -1,4 +1,5 @@
 import gossip
+import gossip.exceptions
 import pytest
 
 from .conftest import RegisteredHook
@@ -33,8 +34,14 @@ def test_dependency(handlers):
     timestamps.append(timestamps.pop(3))
     assert timestamps == sorted(timestamps)
 
+
 def test_circular_dependency(handlers):
-    pytest.skip("n/i")
+    handlers[3].depend_on(handlers[7])
+    handlers[7].depend_on(handlers[3])
+    with pytest.raises(gossip.exceptions.CannotResolveDependencies):
+        _trigger(handlers)
+    for index, handler in enumerate(handlers):
+        assert handler.called == (index not in (3, 7))
 
 
 def test_reordering(handlers):

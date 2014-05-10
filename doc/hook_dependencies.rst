@@ -97,3 +97,9 @@ not_now
 		... def handler():
 		...     if not some_condition():
 		...         gossip.not_now()
+
+Circular and Unmet Dependencies
+-------------------------------
+
+Gossip detects dependencies that aren't resolved in time, such as circular dependencies or cases like ``gossip.wait_for(False)``. In such cases, :class:`gossip.exceptions.CannotResolveDependencies` is raised immediately.
+

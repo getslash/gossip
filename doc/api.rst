@@ -75,4 +75,8 @@ Exceptions
 
 .. autoclass:: NameAlreadyUsed
 
+.. autoclass:: NotNowException
+
+.. autoclass:: CannotResolveDependencies
+
 

@@ -9,3 +9,6 @@ class HookNotFound(LookupError):
 
 class NotNowException(Exception):
     pass
+
+class CannotResolveDependencies(Exception):
+    pass
