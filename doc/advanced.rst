@@ -1,51 +1,38 @@
-Getting Started
-===============
+Advanced Usage
+==============
 
-Gossip is all about defining entry points, called hooks, that follow the `Observer pattern <http://en.wikipedia.org/wiki/Observer_pattern>`_. A hook can be defined, have functions (or handlers) registered to it, and then triggered at some point to notify the observers of an event. 
+Hook Arguments
+--------------
 
-All hooks in gossip must be identified by a **name**, which uniquely identifies the hook.
-
-A Basic Example
----------------
-
-To register a handler for a hook, just user :py:func:`gossip.register`:
+Hooks can receive arguments, which are then passed to the handlers. 
 
 .. code-block:: python
-
+   
 		>>> import gossip
+
+		>>> @gossip.register("with_arguments")
+		... def handler(a, b, c):
+		...     print("Called:", a, b, c)
 		
+		>>> gossip.trigger("with_arguments", a=1, b=2, c=3)
+		Called: 1 2 3
+
+Note that argument mismatches means a runtime error:
+
+.. code-block:: python
 		
-		>>> @gossip.register('hook_name')
-		... def func():
-		...     print('Called')
+		>>> gossip.trigger("with_arguments", a=1) # doctest: +IGNORE_EXCEPTION_DETAIL
+		Traceback (most recent call last):
+		 ...
+		TypeError: handler() takes exactly 3 arguments (1 given)
 
-After we registered the handler, we can trigger it at any time:
-
-.. code-block:: python
-
-		>>> gossip.trigger('hook_name')
-		Called
+.. note::
+   Since hook handlers are likely to be spread across many locations in your projects, argument ordering changes make your code more likely to break. This is why gossip forces all arguments to be passed by keywords, and not as positionals.
 
 
-Unregistering Handlers
-----------------------
 
-Handlers can be easily unregistered by calling ``.gossip.unregister()`` on them:
-
-.. code-block:: python
-
-		>>> func.gossip.unregister()
-
-And you can also unregister all handler on a specific hook:
-
-.. code-block:: python
-
-		>>> import gossip.registry
-		>>> gossip.registry.unregister_all('hook_name')
-
-
-Explicit vs. Implicit Definition of Hooks
------------------------------------------
+Defining Hooks Explicitly
+-------------------------
 
 By default, registering hooks in with :func:`gossip.register` takes care of hook definition and registration at the same time. In several cases, however, you may want to simply define a hook, but not register anything to it yet. For this we have the :func:`gossip.define` API:
 
@@ -89,3 +76,4 @@ However, in this way the hook is never defined for you:
 		   ...
 		HookNotFound: ...
 		
+

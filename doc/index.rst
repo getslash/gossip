@@ -15,8 +15,8 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
-   getting_started
-   arguments
+   basics
+   advanced
    hook_groups
    error_handling
    hook_dependencies
