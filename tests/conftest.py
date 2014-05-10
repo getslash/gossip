@@ -48,6 +48,7 @@ class RegisteredHook(object):
         self._fail = False
         self.kwargs = {"a": 1, "b": 2, "c": 3}
         self.num_called = 0
+        self._dependency = None
 
         class HandlerException(Exception):
             pass
@@ -56,6 +57,9 @@ class RegisteredHook(object):
 
         def handler(**kw):
             assert kw == self.kwargs
+            gossip.wait_for(self._dependency is None or self._dependency.called)
+            if self._dependency is not None:
+                assert self._dependency.called
             self.num_called += 1
             self.last_timestamp = next(timestamp)
             if self._fail:
@@ -64,6 +68,9 @@ class RegisteredHook(object):
         self.func = handler
 
         gossip.register(func=handler, hook_name=hook_name)
+
+    def depend_on(self, hook):
+        self._dependency = hook
 
     @property
     def called(self):

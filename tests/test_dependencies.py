@@ -26,8 +26,12 @@ def test_regular_call_order(handlers):
 
 
 def test_dependency(handlers):
-    pytest.skip("n/i")
-
+    handlers[3].depend_on(handlers[7])
+    _trigger(handlers)
+    timestamps = [handler.last_timestamp for handler in handlers]
+    assert timestamps != sorted(timestamps)
+    timestamps.append(timestamps.pop(3))
+    assert timestamps == sorted(timestamps)
 
 def test_circular_dependency(handlers):
     pytest.skip("n/i")
