@@ -29,16 +29,23 @@ It can also be accessed globally:
 
 .. code-block:: python
 
-		 >>> gossip.get_group_by_name("myproject")
+		 >>> gossip.get_group("myproject")
 		 <Gossip group 'myproject'>
+
+There's even a shortcut for creating groups explicitly:
+
+.. code-block:: python
+
+		>>> gossip.create_group("new_group")
+		<Gossip group 'new_group'>
+
+And getting or creating as necessary:
+
+.. code-block:: python
+
+		>>> gossip.get_or_create_group("new_group")
+		<Gossip group 'new_group'>
+
+
 		
-Manipulating Groups
-~~~~~~~~~~~~~~~~~~~
-
-*WIP*
-
-Group Settings
-~~~~~~~~~~~~~~
-
-*WIP*
 

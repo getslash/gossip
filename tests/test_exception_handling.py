@@ -68,7 +68,7 @@ def test_inherit_policy(exception_handling_policy):
 
 def test_inherit_policy_changing_parent():
     gossip.define("group.hook")
-    group = gossip.get_group_by_name("group")
+    group = gossip.get_group("group")
     for policy in (gossip.RaiseImmediately(), gossip.RaiseDefer(), gossip.IgnoreExceptions()):
         gossip.set_exception_policy(policy)
         assert group.get_exception_policy() is policy

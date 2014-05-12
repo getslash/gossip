@@ -1,7 +1,7 @@
 import functools
 
 from ._compat import iteritems, itervalues, string_types
-from .exceptions import NameAlreadyUsed, HookNotFound
+from .exceptions import NameAlreadyUsed, HookNotFound, GroupNotFound
 from .group import Group
 
 _hooks = {}
@@ -86,31 +86,59 @@ def create_hook(hook_name):
     if hook_name in _groups:
         raise NameAlreadyUsed(
             "A group named {0} already exists. Cannot create a hook with the same name".format(hook_name))
-    parent = get_global_group()
-    group_name = None
-    parts = hook_name.split(".")
-    for part in parts[:-1]:
-        group_name = part if group_name is None else "{0}.{1}".format(
-            group_name, part)
-        group = _groups.get(group_name)
-        if group is None:
-            if group_name in _hooks:
-                raise NameAlreadyUsed(
-                    "A hook named {0} already exists. Cannot create group with the same name".format(group_name))
-            group = _groups[group_name] = parent.get_or_create_subgroup(part)
-        parent = group
 
-    hook = _hooks[hook_name] = parent.create_hook(parts[-1])
+    if "." in hook_name:
+        group_name, hook_base_name = hook_name.rsplit(".", 1)
+    else:
+        group_name = None
+        hook_base_name = hook_name
+
+    hook = _hooks[hook_name] = get_or_create_group(group_name).create_hook(hook_base_name)
     return hook
 
 
 def get_global_group():
-    return _groups[None]
+    return get_group(None)
 
 
 def get_groups():
     return list(group for group_name, group in iteritems(_groups) if group_name is not None)
 
 
-def get_group_by_name(name):
-    return _groups[name]
+def get_group(name):
+    """Returns an existing group with a given name
+
+    :raises: KeyError if no such group exists
+    """
+    try:
+        return _groups[name]
+    except KeyError:
+        raise GroupNotFound(name)
+
+def create_group(name):
+    """Creates and returns a new named group
+
+    :rtype: :class:`gossip.group.Group`
+    """
+    if name in _groups:
+        raise NameAlreadyUsed("Group with name {0} already exists".format(name))
+
+    if name in _hooks:
+        raise NameAlreadyUsed("Hook with name {0} already exists. Cannot create group with same name".format(name))
+
+    group = get_group(None)
+
+    for part in name.split("."):
+        group = group.get_or_create_subgroup(part)
+
+    _groups[name] = group
+    return group
+
+
+def get_or_create_group(name):
+    """Tries to retrieve an existing group, and if it doesn't exist, create a new group
+    """
+    try:
+        return get_group(name)
+    except GroupNotFound:
+        return create_group(name)

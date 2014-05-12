@@ -2,7 +2,7 @@ from .hook import Hook
 from .exceptions import NotNowException
 from .exception_policy import (
     RaiseDefer, RaiseImmediately, IgnoreExceptions)
-from .registry import (get_global_group, get_hook, get_group_by_name, get_groups, define,
+from .registry import (get_global_group, get_hook, get_group, create_group, get_or_create_group, get_groups, define,
                        register, trigger)
 
 
