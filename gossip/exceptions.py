@@ -15,3 +15,6 @@ class NotNowException(Exception):
 
 class CannotResolveDependencies(Exception):
     pass
+
+class UndefinedHook(Exception):
+    pass

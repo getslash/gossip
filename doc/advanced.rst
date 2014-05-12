@@ -57,6 +57,49 @@ Hooks cannot be ``define``-d more than once:
 		   ...
 		NameAlreadyUsed: ...
 
+Strict Registration
+-------------------
+
+By default, handlers can be registered to hooks that haven't been :func:`defined <gossip.define>` yet. While this is ok for most uses, in some cases you may want to limit this behavior, to avoid typos like this one:
+
+.. code-block:: python
+
+		>>> @gossip.register("my_group.on_initialize")
+		... def handler():
+		...     pass
+
+		>>> gossip.trigger("my_group.on_initailize") # spot the difference?
+
+To do this, you can make any hook group into a *strict group*, meaning it requires registered hooks to be properly defined first:
+
+.. code-block:: python
+
+		>>> group = gossip.create_group("some_group")
+		>>> group.set_strict()
+
+		>>> @gossip.register("some_group.nonexisting") # doctest: +IGNORE_EXCEPTION_DETAIL
+		... def handler():
+		...     pass
+		Traceback (most recent call last):
+		   ...
+		UndefinedHook: hook 'some_group.nonexisting' wasn't defined yet
+
+This also works if you set a group as a strict group *after* you registered hooks to it -- any existing hook that wasn't formally defined will trigger an exception:
+
+.. code-block:: python
+
+		>>> group = gossip.create_group("other_group")
+		>>> @gossip.register("other_group.nonexisting")
+		... def handler():
+		...     pass
+
+		>>> group.set_strict() # doctest: +IGNORE_EXCEPTION_DETAIL
+		Traceback (most recent call last):
+		   ...
+		UndefinedHook: hook 'other_group.nonexisting' was already registered, but not defined
+		
+
+
 Getting Hooks by Name
 ---------------------
 

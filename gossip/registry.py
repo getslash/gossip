@@ -15,7 +15,11 @@ def define(hook_name):
 
     :returns: The :class:`gossip.hook.Hook` object created
     """
-    return create_hook(hook_name)
+    returned = get_or_create_hook(hook_name)
+    if returned.is_defined():
+        raise NameAlreadyUsed("Hook {0} is already defined".format(hook_name))
+    returned.mark_defined()
+    return returned
 
 
 def register(func, hook_name=None):

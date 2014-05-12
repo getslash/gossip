@@ -1,5 +1,6 @@
 from ._compat import itervalues
 from .exception_policy import ExceptionPolicy, Inherit, RaiseImmediately
+from .exceptions import UndefinedHook
 from .hook import Hook
 
 
@@ -19,10 +20,27 @@ class Group(object):
         return self._parent is None
 
     def reset(self):
+        self._strict = False
         self._hooks = {}
         self._subgroups = {}
         self._parent_exception_policy = None
         self.set_exception_policy(RaiseImmediately() if self._parent is None else Inherit())
+
+    def set_strict(self):
+        """Marks this group as a strict group, meaning all hooks registered must be defined in advance"""
+        undefined = self.get_undefined_hooks()
+        if undefined:
+            raise UndefinedHook("Undefined hook{0}: {1}".format("s" if len(undefined) > 1 else "", ", ".join(hook.full_name for hook in undefined)))
+        self._strict = True
+
+    def get_undefined_hooks(self):
+        returned = [hook for hook in itervalues(self._hooks) if not hook.is_defined()]
+        for group in itervalues(self._subgroups):
+            returned.extend(group.get_undefined_hooks())
+        return returned
+
+    def is_strict(self):
+        return self._strict
 
     def notify_parent_exception_policy_changed(self):
         self._parent_exception_policy = None

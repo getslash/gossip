@@ -1,8 +1,9 @@
 import logging
 import sys
 
+from .exceptions import (CannotResolveDependencies, NotNowException,
+                         UndefinedHook)
 from .registration import Registration
-from .exceptions import NotNowException, CannotResolveDependencies
 
 _logger = logging.getLogger(__name__)
 
@@ -21,7 +22,14 @@ class Hook(object):
         self._arg_names = arg_names
         self._swallow_exceptions = False
         self._trigger_internal_hooks = self.full_name != "gossip.on_handler_exception"
+        self._defined = False
         self.doc = doc
+
+    def mark_defined(self):
+        self._defined = True
+
+    def is_defined(self):
+        return self._defined
 
     def get_argument_names(self):
         return self._arg_names
@@ -32,6 +40,8 @@ class Hook(object):
     def register(self, func):
         """Registers a new handler to this hook
         """
+        if self.group.is_strict() and not self._defined:
+            raise UndefinedHook("hook {0} wasn't defined yet".format(self.full_name))
         self._registrations.append(Registration(func, self))
 
     def unregister(self, registration):

@@ -16,8 +16,8 @@ Contents:
    :maxdepth: 2
 
    basics
-   advanced
    hook_groups
+   advanced
    error_handling
    hook_dependencies
    api
