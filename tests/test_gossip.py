@@ -3,6 +3,10 @@ from gossip import registry as gossip_registry
 import pytest
 from gossip.exceptions import NameAlreadyUsed
 
+def test_hook_documentation():
+    docstring = "fdkjfkdjfd"
+    gossip.define("some_hook", doc=docstring)
+    assert gossip.get_hook("some_hook").doc == docstring
 
 def test_register_trigger(registered_hook):
     assert registered_hook.works()

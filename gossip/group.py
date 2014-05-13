@@ -45,9 +45,9 @@ class Group(object):
     def notify_parent_exception_policy_changed(self):
         self._parent_exception_policy = None
 
-    def create_hook(self, name):
+    def create_hook(self, name, **kwargs):
         assert name not in self._hooks
-        hook = Hook(self, name)
+        hook = Hook(self, name, **kwargs)
         self._hooks[name] = hook
         return hook
 

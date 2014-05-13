@@ -10,12 +10,12 @@ _groups = {
     None: Group("**global**")
 }
 
-def define(hook_name):
+def define(hook_name, **kwargs):
     """Defines a new hook with the given name
 
     :returns: The :class:`gossip.hook.Hook` object created
     """
-    returned = get_or_create_hook(hook_name)
+    returned = get_or_create_hook(hook_name, **kwargs)
     if returned.is_defined():
         raise NameAlreadyUsed("Hook {0} is already defined".format(hook_name))
     returned.mark_defined()
@@ -66,11 +66,11 @@ def trigger(hook_name, **kwargs):
         hook.trigger(kwargs)
 
 
-def get_or_create_hook(hook_name):
+def get_or_create_hook(hook_name, **kwargs):
     try:
         return get_hook(hook_name)
     except HookNotFound:
-        return create_hook(hook_name)
+        return create_hook(hook_name, **kwargs)
 
 def get_hook(hook_name):
     """Gets a hook by its name
@@ -83,7 +83,7 @@ def get_hook(hook_name):
         raise HookNotFound("Hook {0} does not exist".format(hook_name))
 
 
-def create_hook(hook_name):
+def create_hook(hook_name, **kwargs):
     if hook_name in _hooks:
         raise NameAlreadyUsed(
             "A hook named {0} already exists. Cannot create a hook with the same name".format(hook_name))
@@ -97,7 +97,7 @@ def create_hook(hook_name):
         group_name = None
         hook_base_name = hook_name
 
-    hook = _hooks[hook_name] = get_or_create_group(group_name).create_hook(hook_base_name)
+    hook = _hooks[hook_name] = get_or_create_group(group_name).create_hook(hook_base_name, **kwargs)
     return hook
 
 
