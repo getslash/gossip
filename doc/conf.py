@@ -99,6 +99,8 @@ html_theme_options = {
     'logo': 'gossip-small.png',
     'github_user': 'vmalloc',
     'github_repo': 'gossip',
+    'github_banner': True,
+    'travis_button': True,
 }
 html_sidebars = {
    '**': [
