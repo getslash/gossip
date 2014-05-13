@@ -1,3 +1,5 @@
+import itertools
+
 from ._compat import itervalues
 from .exception_policy import ExceptionPolicy, Inherit, RaiseImmediately
 from .exceptions import UndefinedHook
@@ -57,12 +59,24 @@ class Group(object):
             returned = self._subgroups[name] = Group(name, parent=self)
         return returned
 
+    def get_all_hooks(self):
+        returned = list(itervalues(self._hooks))
+        for group in itervalues(self._subgroups):
+            returned.extend(group.get_all_hooks())
+        return returned
+
     def get_subgroups(self):
         return list(itervalues(self._subgroups))
 
     def remove_all_children(self):
         self._hooks.clear()
         self._subgroups.clear()
+
+    def unregister_all(self):
+        """Unregisters all handlers in all hooks in all subgroups of this group
+        """
+        for child in itertools.chain(itervalues(self._hooks), itervalues(self._subgroups)):
+            child.unregister_all()
 
     def set_exception_policy(self, policy):
         """ Determines how exceptions are handled by hooks in this group

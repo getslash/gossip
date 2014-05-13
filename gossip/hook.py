@@ -25,6 +25,9 @@ class Hook(object):
         self._defined = False
         self.doc = doc
 
+    def get_registrations(self):
+        return list(self._registrations)
+
     def mark_defined(self):
         self._defined = True
 

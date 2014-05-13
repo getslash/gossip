@@ -36,6 +36,17 @@ def test_unregister(registered_hook):
     registered_hook.func.gossip.unregister()
     assert not registered_hook.works()
 
+def test_unregister_group():
+    gossip.register("group.a")(lambda: None)
+    gossip.register("group.b")(lambda: None)
+    gossip.register("group.subgroup.a")(lambda: None)
+
+    group = gossip.get_group("group")
+    assert all(hook.get_registrations() for hook in group.get_all_hooks())
+    group.unregister_all()
+    assert all(not hook.get_registrations() for hook in group.get_all_hooks())
+
+
 def test_unregister_all_on_hook(registered_hooks):
     assert all(r.works() for r in registered_hooks)
     gossip_registry.unregister_all(registered_hooks[0].name)
