@@ -57,8 +57,12 @@ class Group(object):
             returned = self._subgroups[name] = Group(name, parent=self)
         return returned
 
+    def get_subgroups(self):
+        return list(itervalues(self._subgroups))
+
     def remove_all_children(self):
         self._hooks.clear()
+        self._subgroups.clear()
 
     def set_exception_policy(self, policy):
         """ Determines how exceptions are handled by hooks in this group

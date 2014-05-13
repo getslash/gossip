@@ -53,6 +53,7 @@ def test_undefine_all_deletes_groups(registered_hooks):
     gossip_registry.undefine_all()
     assert not gossip.get_groups()
     assert all(not r.works() for r in registered_hooks)
+    assert not gossip.get_global_group().get_subgroups()
 
 def test_global_group_is_same(registered_hooks):
     global_group = gossip.get_global_group()
