@@ -44,6 +44,8 @@ Hook Dependency
 Hook Unregistration
 -------------------
 
+.. autofunction:: gossip.unregister_token
+
 .. automodule:: gossip.registry
 
 .. autofunction:: gossip.registry.unregister_all

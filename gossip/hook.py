@@ -40,12 +40,14 @@ class Hook(object):
     def __call__(self, **kwargs):
         return self.trigger(kwargs)
 
-    def register(self, func):
+    def register(self, func, token=None):
         """Registers a new handler to this hook
         """
         if self.group.is_strict() and not self._defined:
             raise UndefinedHook("hook {0} wasn't defined yet".format(self.full_name))
-        self._registrations.append(Registration(func, self))
+        returned = Registration(func, self, token=token)
+        self._registrations.append(returned)
+        return returned
 
     def unregister(self, registration):
         assert registration.hook is self

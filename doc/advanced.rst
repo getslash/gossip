@@ -99,6 +99,25 @@ This also works if you set a group as a strict group *after* you registered hook
 		UndefinedHook: hook 'other_group.nonexisting' was already registered, but not defined
 		
 
+Token Registration
+------------------
+
+Handlers can be registered with *tokens*. A token is anything that supports equality and hashing, but it is most commonly used for Python strings. Token are useful to unregister a group of handlers in a single operation, with :func:`gossip.unregister_token`:
+
+.. code-block:: python
+
+		>>> @gossip.register("some_hook", token="token1")
+		... def handler1():
+		...     pass
+
+		>>> @gossip.register("some_hook", token="token1")
+		... def handler2():
+		...     pass
+
+		>>> gossip.unregister_token("token1") # unregisters all handlers of all hooks that were registered with 'token1'
+
+
+
 
 Getting Hooks by Name
 ---------------------

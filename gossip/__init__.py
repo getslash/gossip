@@ -1,9 +1,9 @@
-from .hook import Hook
+from .exception_policy import IgnoreExceptions, RaiseDefer, RaiseImmediately
 from .exceptions import NotNowException
-from .exception_policy import (
-    RaiseDefer, RaiseImmediately, IgnoreExceptions)
-from .registry import (get_global_group, get_hook, get_group, create_group, get_or_create_group, get_groups, define,
-                       register, trigger)
+from .hook import Hook
+from .registry import (create_group, define, get_all_registrations,
+                       get_global_group, get_group, get_groups, get_hook,
+                       get_or_create_group, register, trigger, unregister_token)
 
 
 def set_exception_policy(policy):

@@ -65,6 +65,9 @@ class Group(object):
             returned.extend(group.get_all_hooks())
         return returned
 
+    def get_all_registrations(self):
+        return [registration for hook in self.get_all_hooks() for registration in hook.get_registrations()]
+
     def get_subgroups(self):
         return list(itervalues(self._subgroups))
 

@@ -10,6 +10,7 @@ _groups = {
     None: Group("**global**")
 }
 
+
 def define(hook_name, **kwargs):
     """Defines a new hook with the given name
 
@@ -22,17 +23,25 @@ def define(hook_name, **kwargs):
     return returned
 
 
-def register(func, hook_name=None):
+def register(func=None, hook_name=None, token=None):
     """Registers a new function to a hook
 
     :param hook_name: full name of hook to register to
+    :param token: token to register with. This can be used to later unregister a group of handlers which have a
+           specific token
     :returns: The function (for decorator chaining)
 
     """
     if isinstance(func, string_types):
-        return functools.partial(register, hook_name=func)
+        assert hook_name is None
+        hook_name = func
+        func = None
+
+    if func is None:
+        return functools.partial(register, hook_name=hook_name, token=token)
     assert hook_name is not None
-    get_or_create_hook(hook_name).register(func)
+    registration = get_or_create_hook(hook_name).register(func, token=token)
+    assert registration
     return func
 
 
@@ -42,6 +51,15 @@ def unregister_all(hook_name):
     """
     if hook_name in _hooks:
         _hooks[hook_name].unregister_all()
+
+
+def unregister_token(token):
+    """Unregisters all handlers that were registered with ``token``
+    """
+    # todo: optimize this
+    for registration in get_all_registrations():
+        if registration.token == token:
+            registration.unregister()
 
 
 def undefine_all():
@@ -57,6 +75,7 @@ def undefine_all():
     _groups[None] = global_group
     global_group.remove_all_children()
 
+
 def trigger(hook_name, **kwargs):
     """Triggers a hook by name, causing all of its handlers to be called
     """
@@ -71,6 +90,7 @@ def get_or_create_hook(hook_name, **kwargs):
         return get_hook(hook_name)
     except HookNotFound:
         return create_hook(hook_name, **kwargs)
+
 
 def get_hook(hook_name):
     """Gets a hook by its name
@@ -97,12 +117,17 @@ def create_hook(hook_name, **kwargs):
         group_name = None
         hook_base_name = hook_name
 
-    hook = _hooks[hook_name] = get_or_create_group(group_name).create_hook(hook_base_name, **kwargs)
+    hook = _hooks[hook_name] = get_or_create_group(
+        group_name).create_hook(hook_base_name, **kwargs)
     return hook
 
 
 def get_global_group():
     return get_group(None)
+
+
+def get_all_registrations():
+    return get_global_group().get_all_registrations()
 
 
 def get_groups():
@@ -119,16 +144,19 @@ def get_group(name):
     except KeyError:
         raise GroupNotFound(name)
 
+
 def create_group(name):
     """Creates and returns a new named group
 
     :rtype: :class:`gossip.group.Group`
     """
     if name in _groups:
-        raise NameAlreadyUsed("Group with name {0} already exists".format(name))
+        raise NameAlreadyUsed(
+            "Group with name {0} already exists".format(name))
 
     if name in _hooks:
-        raise NameAlreadyUsed("Hook with name {0} already exists. Cannot create group with same name".format(name))
+        raise NameAlreadyUsed(
+            "Hook with name {0} already exists. Cannot create group with same name".format(name))
 
     group = get_group(None)
 
