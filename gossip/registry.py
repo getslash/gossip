@@ -60,6 +60,7 @@ def unregister_token(token):
     for group in itervalues(_groups):
         group.unregister_token(token)
 
+
 def undefine_all():
     """
     Undefines all defined hooks and groups
@@ -123,8 +124,10 @@ def create_hook(hook_name, **kwargs):
 def get_global_group():
     return get_group(None)
 
+
 def get_all_registrations():
     return get_global_group().get_all_registrations()
+
 
 def get_groups():
     return list(group for group_name, group in iteritems(_groups) if group_name is not None)
