@@ -1,4 +1,8 @@
+import sys
 import itertools
+import types
+
+PY26 = sys.version_info < (2, 7)
 
 _registration_id = itertools.count()
 
@@ -13,8 +17,8 @@ class Registration(object):
         self.hook = hook
         self.func = func
         self.token = token
-        if not hasattr(self.func, "gossip"):
-            self.func.gossip = self
+        if not isinstance(func, (classmethod, staticmethod, types.MethodType)) and not hasattr(func, "gossip"):
+            func.gossip = self
 
     def unregister(self):
         if self.hook is not None:

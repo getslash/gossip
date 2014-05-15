@@ -94,3 +94,24 @@ def test_group_name_taken_by_hook():
             pass
 
     assert "group_name" not in gossip.registry._groups
+
+def test_register_class_and_instance_methods():
+
+    class MyClass(object):
+
+        @gossip.register("hook")
+        @classmethod
+        def class_method(cls):
+            pass
+
+        @gossip.register("hook")
+        @staticmethod
+        def static_method():
+            pass
+
+        def regular_method(self):
+            pass
+
+    m = MyClass()
+
+    gossip.register("hook")(m.regular_method)
