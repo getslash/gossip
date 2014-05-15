@@ -1,11 +1,13 @@
 import functools
 
+from munch import Munch
+
 import gossip
 import pytest
 
 
-def test_token_registration_unregistration():
-
+@pytest.fixture
+def registrations():
     @gossip.register("group.hook1")
     def handler1():
         pass
@@ -22,8 +24,18 @@ def test_token_registration_unregistration():
     def handler4():
         pass
 
+    return Munch(handler1=handler1, handler2=handler2, handler3=handler3, handler4=handler4)
+
+
+def test_token_registration_unregistration(registrations):
+
     assert len(gossip.get_all_registrations()) == 4
     gossip.unregister_token("token2")
     assert len(gossip.get_all_registrations()) == 3
-    assert not handler4.gossip.is_active()
+    assert not registrations.handler4.gossip.is_active()
 
+
+def test_group_only_token_unregistration(registrations):
+
+    gossip.get_group("group2").unregister_token("token1")
+    assert len(gossip.get_all_registrations()) == 3

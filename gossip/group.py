@@ -81,6 +81,11 @@ class Group(object):
         for child in itertools.chain(itervalues(self._hooks), itervalues(self._subgroups)):
             child.unregister_all()
 
+    def unregister_token(self, token):
+        for registration in self.get_all_registrations():
+            if registration.token == token:
+                registration.unregister()
+
     def set_exception_policy(self, policy):
         """ Determines how exceptions are handled by hooks in this group
         """

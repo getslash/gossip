@@ -57,10 +57,8 @@ def unregister_token(token):
     """Unregisters all handlers that were registered with ``token``
     """
     # todo: optimize this
-    for registration in get_all_registrations():
-        if registration.token == token:
-            registration.unregister()
-
+    for group in itervalues(_groups):
+        group.unregister_token(token)
 
 def undefine_all():
     """
@@ -125,10 +123,8 @@ def create_hook(hook_name, **kwargs):
 def get_global_group():
     return get_group(None)
 
-
 def get_all_registrations():
     return get_global_group().get_all_registrations()
-
 
 def get_groups():
     return list(group for group_name, group in iteritems(_groups) if group_name is not None)
@@ -162,6 +158,8 @@ def create_group(name):
 
     for part in name.split("."):
         group = group.get_or_create_subgroup(part)
+        if group.full_name not in _groups:
+            _groups[group.full_name] = group
 
     _groups[name] = group
     return group

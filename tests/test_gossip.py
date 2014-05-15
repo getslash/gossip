@@ -115,3 +115,12 @@ def test_register_class_and_instance_methods():
     m = MyClass()
 
     gossip.register("hook")(m.regular_method)
+
+def test_nested_groups():
+
+    @gossip.register("a.b.c")
+    def handler():
+        pass
+
+    assert gossip.get_group("a").name == "a"
+    assert gossip.get_group("a.b").name == "b"
