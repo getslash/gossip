@@ -22,6 +22,10 @@ def define(hook_name, **kwargs):
     returned.mark_defined()
     return returned
 
+def undefine(hook_name):
+    hook = get_hook(hook_name)
+    hook.group.delete_hook(hook_name.split(".")[-1])
+    _hooks.pop(hook_name)
 
 def register(func=None, hook_name=None, token=None):
     """Registers a new function to a hook

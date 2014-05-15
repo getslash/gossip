@@ -3,7 +3,8 @@ from .exceptions import NotNowException
 from .hook import Hook
 from .registry import (create_group, define, get_all_registrations,
                        get_global_group, get_group, get_groups, get_hook,
-                       get_or_create_group, register, trigger, unregister_token)
+                       get_or_create_group, register, trigger, undefine,
+                       unregister_token)
 
 
 def set_exception_policy(policy):

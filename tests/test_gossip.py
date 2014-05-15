@@ -16,6 +16,18 @@ def test_define_twice(hook_name):
     with pytest.raises(NameAlreadyUsed):
         gossip.define(hook_name)
 
+def test_undefine(hook_name):
+    gossip.define(hook_name)
+
+    @gossip.register(hook_name)
+    def handler():
+        pass
+
+    gossip.undefine(hook_name)
+    gossip.define(hook_name)
+
+    assert not gossip.get_hook(hook_name).get_registrations()
+
 def test_get_hook(hook_name):
     with pytest.raises(LookupError):
         gossip.get_hook(hook_name)

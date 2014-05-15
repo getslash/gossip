@@ -53,6 +53,9 @@ class Group(object):
         self._hooks[name] = hook
         return hook
 
+    def delete_hook(self, name):
+        self._hooks.pop(name)
+
     def get_or_create_subgroup(self, name):
         returned = self._subgroups.get(name)
         if returned is None:
