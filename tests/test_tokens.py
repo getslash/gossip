@@ -29,13 +29,16 @@ def registrations():
 
 def test_token_registration_unregistration(registrations):
 
-    assert len(gossip.get_all_registrations()) == 4
+    assert len(_get_all_registrations()) == 4
     gossip.unregister_token("token2")
-    assert len(gossip.get_all_registrations()) == 3
+    assert len(_get_all_registrations()) == 3
     assert not registrations.handler4.gossip.is_active()
 
 
 def test_group_only_token_unregistration(registrations):
 
     gossip.get_group("group2").unregister_token("token1")
-    assert len(gossip.get_all_registrations()) == 3
+    assert len(_get_all_registrations()) == 3
+
+def _get_all_registrations():
+    return [registration for hook in gossip.get_all_hooks() for registration in hook.get_registrations()]

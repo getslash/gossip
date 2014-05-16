@@ -12,8 +12,8 @@ To register a handler for a hook, just user :py:func:`gossip.register`:
 
 .. code-block:: python
 
+		>>> from __future__ import print_function
 		>>> import gossip
-		
 		
 		>>> @gossip.register('hook_name')
 		... def func():
@@ -43,7 +43,6 @@ And you can also unregister all handler on a specific hook:
 
 .. code-block:: python
 
-		>>> import gossip.registry
-		>>> gossip.registry.unregister_all('hook_name')
+		>>> gossip.get_hook('hook_name').unregister_all()
 
 

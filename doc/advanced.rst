@@ -12,7 +12,7 @@ Hooks can receive arguments, which are then passed to the handlers.
 
 		>>> @gossip.register("with_arguments")
 		... def handler(a, b, c):
-		...     print("Called:", a, b, c)
+		...     print("Called: {0} {1} {2}".format(a, b, c))
 		
 		>>> gossip.trigger("with_arguments", a=1, b=2, c=3)
 		Called: 1 2 3

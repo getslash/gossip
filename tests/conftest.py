@@ -1,17 +1,18 @@
 import itertools
 
 import gossip
-import gossip.registry
+import gossip.hooks
 import pytest
 
 hook_id = itertools.count()
 
 @pytest.fixture(autouse=True, scope="function")
 def clear_registrations():
-    gossip.registry.undefine_all()
+    for hook in gossip.get_all_hooks():
+        hook.unregister_all()
 
 @pytest.fixture(autouse=True, scope="function")
-def reset_global_group():
+def undefine_all():
     gossip.get_global_group().reset()
 
 @pytest.fixture

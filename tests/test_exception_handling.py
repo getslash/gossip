@@ -1,6 +1,7 @@
 from munch import Munch
 
 import gossip
+import gossip.groups
 import pytest
 from gossip.exception_policy import Inherit
 
@@ -60,7 +61,7 @@ def test_default_global_group_policy():
 
 
 def test_inherit_policy(exception_handling_policy):
-    group = gossip.group.Group("some_group", parent=gossip.get_global_group())
+    group = gossip.groups.Group("some_group", parent=gossip.get_global_group())
     gossip.set_exception_policy(exception_handling_policy)
     group.set_exception_policy(Inherit())
     assert group.get_exception_policy() is exception_handling_policy
@@ -81,7 +82,7 @@ def test_group_returns_to_default_after_reset():
 
 
 def test_get_exception_policy(exception_handling_policy):
-    group = gossip.group.Group("some_group", parent=gossip.get_global_group())
+    group = gossip.groups.Group("some_group", parent=gossip.get_global_group())
     group.set_exception_policy(exception_handling_policy)
     assert group.get_exception_policy() is exception_handling_policy
 
