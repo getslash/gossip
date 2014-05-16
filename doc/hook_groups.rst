@@ -17,7 +17,7 @@ A *hook group* is automatically formed when you use a dot (``.``) in a hook's na
 		... def handle_initialize():
 		...     pass
 
-Groups are implemented as objects (:py:class:`gossip.group.Group`), and can be easily obtained from the handler:
+Groups are implemented as objects (:py:class:`gossip.groups.Group`), and can be easily obtained from the handler:
 
 .. code-block:: python
 

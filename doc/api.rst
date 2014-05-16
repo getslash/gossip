@@ -46,26 +46,20 @@ Hook Unregistration
 
 .. autofunction:: gossip.unregister_token
 
-.. automodule:: gossip.registry
-
-.. autofunction:: gossip.registry.unregister_all
-
-.. autofunction:: gossip.registry.undefine_all
-
 Hook Objects
 ------------
 
-.. automodule:: gossip.hook
+.. automodule:: gossip.hooks
 
-.. autoclass:: gossip.hook.Hook
+.. autoclass:: gossip.hooks.Hook
   :members:
 
 Hook Groups
 -----------
 
-.. automodule:: gossip.group
+.. automodule:: gossip.groups
 
-.. autoclass:: gossip.group.Group
+.. autoclass:: gossip.groups.Group
   :members:
 
 Exceptions

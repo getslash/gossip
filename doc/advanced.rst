@@ -44,7 +44,7 @@ By default, registering hooks in with :func:`gossip.register` takes care of hook
 		... def handler():
 		...     pass
 
-The :func:`gossip.register` returns the :class:`gossip.hook.Hook` object for the defined hook, so further operations can be executed against it.
+The :func:`gossip.register` returns the :class:`gossip.hooks.Hook` object for the defined hook, so further operations can be executed against it.
 
 Hooks cannot be ``define``-d more than once:
 
@@ -122,7 +122,7 @@ Handlers can be registered with *tokens*. A token is anything that supports equa
 Getting Hooks by Name
 ---------------------
 
-Once a hook is defined you can get the underlying :class:`gossip.hook.Hook` object by using :func:`gossip.get_hook`:
+Once a hook is defined you can get the underlying :class:`gossip.hooks.Hook` object by using :func:`gossip.get_hook`:
 
 .. code-block:: python
 

@@ -18,7 +18,7 @@ Setting the strategy is done with the :func:`gossip.set_exception_policy` functi
 		>>> gossip.set_exception_policy(gossip.RaiseImmediately())
 		>>> gossip.set_exception_policy(gossip.IgnoreExceptions())
 
-The policy can be changed per each hook group. The default is to inherit the behavior of the parent group. :func:`gossip.set_exception_policy` is merely an alias for :func:`gossip.group.Group.set_exception_policy`.
+The policy can be changed per each hook group. The default is to inherit the behavior of the parent group. :func:`gossip.set_exception_policy` is merely an alias for :func:`gossip.groups.Group.set_exception_policy`.
 
 Available Exception Handling Policies
 -------------------------------------
