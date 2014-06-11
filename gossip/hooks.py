@@ -105,7 +105,7 @@ class Hook(object):
             exc_info = sys.exc_info()
             if self._trigger_internal_hooks:
                 trigger("gossip.on_handler_exception",
-                        handler=registration.func, exception=exc_info)
+                        handler=registration.func, exception=exc_info, hook=self)
             _logger.warn("Exception occurred while calling %s",
                          registration, exc_info=exc_info)
             # TODO: debug here

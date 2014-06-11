@@ -38,7 +38,7 @@ Gossip has predefined built-in hooks to handle various situations externally. On
 .. code-block:: python
 
 		>>> @gossip.register('gossip.on_handler_exception')
-		... def debugger(handler, exception):
+		... def debugger(handler, exception, hook):
 		...    exc_type, exc_value, exc_tb = exception
 		...    import pdb
 		...    pdb.post_mortem(exc_tb)
