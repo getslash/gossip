@@ -1,9 +1,7 @@
-import itertools
-
 from . import registry
 from ._compat import itervalues, iteritems
 from .exception_policy import ExceptionPolicy, Inherit, RaiseImmediately
-from .exceptions import UndefinedHook, GroupNotFound, NameAlreadyUsed
+from .exceptions import GroupNotFound, NameAlreadyUsed
 
 
 class Group(object):
@@ -46,10 +44,11 @@ class Group(object):
 
     def set_strict(self):
         """Marks this group as a strict group, meaning all hooks registered must be defined in advance"""
-        undefined = self.get_undefined_hooks()
-        if undefined:
-            raise UndefinedHook("Undefined hook{0}: {1}".format(
-                "s" if len(undefined) > 1 else "", ", ".join(hook.full_name for hook in undefined)))
+        for child in itervalues(self._children):
+            if isinstance(child, Group):
+                child.set_strict()
+            else:
+                child.validate_strict()
         self._strict = True
 
     def get_undefined_hooks(self):

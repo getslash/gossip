@@ -6,7 +6,8 @@ from . import registry
 from . import groups
 from ._compat import string_types, itervalues
 from .exceptions import (CannotResolveDependencies, HookNotFound,
-                         NameAlreadyUsed, NotNowException, UndefinedHook)
+                         NameAlreadyUsed, NotNowException, UndefinedHook,
+                         UnsupportedHookTags)
 from .registration import Registration
 
 _logger = logging.getLogger(__name__)
@@ -17,6 +18,7 @@ class Hook(object):
         super(Hook, self).__init__()
         self.group = group
         self.name = name
+        self.tags = None
         if self.group.is_global():
             self.full_name = name
         else:
@@ -33,6 +35,10 @@ class Hook(object):
         self.group.remove_child(self.name)
         registry.hooks.pop(self.full_name)
 
+    def set_tags(self, tags):
+        assert not self.tags, "Cannot override exists tags {0} with {1}".format(self.tags, tags)
+        self.tags = tags
+
     def get_registrations(self):
         return list(self._registrations)
 
@@ -48,13 +54,30 @@ class Hook(object):
     def __call__(self, **kwargs):
         return self.trigger(kwargs)
 
-    def register(self, func, token=None):
+    def validate_tags(self, tags, is_strict=None):
+        if is_strict is None:
+            is_strict = self.group.is_strict()
+        if not is_strict:
+            return
+        normalize_tags = lambda tag_: set(tag_) if tag_ is not None else set()
+        extra_tags = normalize_tags(tags) - normalize_tags(self.tags)
+        if extra_tags:
+            raise UnsupportedHookTags("hook {0} support {1} tags, not: {2}".format(self.full_name, self.tags, extra_tags))
+
+    def validate_strict(self, registrations_to_validate=None):
+        if not self._defined:
+            raise UndefinedHook("hook {0} wasn't defined yet".format(self.full_name))
+        if registrations_to_validate is None:
+            registrations_to_validate = self._registrations
+        for registration in registrations_to_validate:
+            self.validate_tags(registration.tags, is_strict=True)
+
+    def register(self, func, token=None, tags=None):
         """Registers a new handler to this hook
         """
-        if self.group.is_strict() and not self._defined:
-            raise UndefinedHook(
-                "hook {0} wasn't defined yet".format(self.full_name))
-        returned = Registration(func, self, token=token)
+        returned = Registration(func, self, token=token, tags=tags)
+        if self.group.is_strict():
+            self.validate_strict([returned])
         self._registrations.append(returned)
         return returned
 
@@ -66,7 +89,8 @@ class Hook(object):
     def unregister_all(self):
         del self._registrations[:]
 
-    def trigger(self, kwargs):
+    def trigger(self, kwargs, tags=None):
+        self.validate_tags(tags)
         exception_policy = self.group.get_exception_policy()
 
         registrations = self._registrations
@@ -76,6 +100,8 @@ class Hook(object):
             while True:
                 any_resolved = False
                 for registration in registrations:
+                    if not registration.has_tags(tags):
+                        continue
                     try:
                         exc_info = self._call_registration(
                             registration, kwargs)
@@ -118,10 +144,13 @@ class Hook(object):
 def trigger(hook_name, **kwargs):
     """Triggers a hook by name, causing all of its handlers to be called
     """
+    trigger_with_tags(hook_name, kwargs, None)
 
+
+def trigger_with_tags(hook_name, kwargs=None, tags=None):
     hook = registry.hooks.get(hook_name)
     if hook is not None:
-        hook.trigger(kwargs)
+        hook.trigger(kwargs or {}, tags)
 
 
 def get_or_create_hook(hook_name, **kwargs):
@@ -169,14 +198,17 @@ def define(hook_name, **kwargs):
 
     :returns: The :class:`gossip.hook.Hook` object created
     """
+    tags = kwargs.pop('tags', None)
     returned = get_or_create_hook(hook_name, **kwargs)
     if returned.is_defined():
         raise NameAlreadyUsed("Hook {0} is already defined".format(hook_name))
+    if tags:
+        returned.set_tags(tags)
     returned.mark_defined()
     return returned
 
 
-def register(func=None, hook_name=None, token=None):
+def register(func=None, hook_name=None, token=None, tags=None):
     """Registers a new function to a hook
 
     :param hook_name: full name of hook to register to
@@ -191,9 +223,9 @@ def register(func=None, hook_name=None, token=None):
         func = None
 
     if func is None:
-        return functools.partial(register, hook_name=hook_name, token=token)
+        return functools.partial(register, hook_name=hook_name, token=token, tags=tags)
     assert hook_name is not None
-    registration = get_or_create_hook(hook_name).register(func, token=token)
+    registration = get_or_create_hook(hook_name).register(func, token=token, tags=tags)
     assert registration
     return func
 
