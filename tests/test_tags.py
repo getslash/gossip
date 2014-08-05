@@ -1,7 +1,6 @@
 import logging
-import itertools
 from munch import Munch
-from contextlib import contextmanager
+from .utils import TestSteps, _noop
 
 import pytest
 import gossip
@@ -9,13 +8,9 @@ from gossip.exceptions import UndefinedHook, UnsupportedHookTags
 
 
 _logger = logging.getLogger(__name__)
-step_funcs = []
+steps = TestSteps()
 
-@contextmanager
-def _noop():
-    yield
-
-@step_funcs.append
+@steps.add
 def _make_group_strict(ctx):
     raises_context = _noop()
     if ctx.registered_hook:
@@ -27,12 +22,12 @@ def _make_group_strict(ctx):
         gossip.get_or_create_group("group").set_strict()
     ctx.made_strict = True
 
-@step_funcs.append
+@steps.add
 def _make_define_hook(ctx):
     gossip.define("group.defined_hook", tags=ctx.defined_tags)
     ctx.defined_hook = True
 
-@step_funcs.append
+@steps.add
 def _make_register_hook(ctx):
     raises_context = _noop()
     if ctx.made_strict:
@@ -46,11 +41,6 @@ def _make_register_hook(ctx):
         def handler():
             pass
     ctx.registered_hook = True
-
-assert step_funcs
-@pytest.fixture(params=list(itertools.permutations(step_funcs)))
-def steps(request):
-    return request.param
 
 def _clean_workspace():
     gossip.registry.hooks = {}
@@ -77,6 +67,7 @@ def _clean_workspace():
     (("some_tag", "other_tag"), ("some_tag", "other_tag"), True),
     (("some_tag", "other_tag"), ("fake_tag", "fake_tag2"), False),
     ])
+@steps.get_all_permutations
 def test_tags(tags_info, steps):
     defined_tags, registered_tags, valid_strict_tags = tags_info
     ctx = Munch(
