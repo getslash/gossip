@@ -18,3 +18,6 @@ class CannotResolveDependencies(Exception):
 
 class UndefinedHook(Exception):
     pass
+
+class UnsupportedHookTags(Exception):
+    pass
