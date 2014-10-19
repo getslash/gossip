@@ -25,7 +25,11 @@ import sys, os
 
 # Add any Sphinx extension module names here, as strings. They can be extensions
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
-extensions = ['sphinx.ext.autodoc', 'alabaster']
+extensions = ['sphinx.ext.autodoc', 'alabaster', 'releases']
+
+releases_issue_uri = "https://github.com/vmalloc/gossip/issues/%s"
+releases_release_uri = "https://github.com/vmalloc/gossip/tree/%s"
+
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']

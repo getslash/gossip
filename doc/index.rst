@@ -20,6 +20,7 @@ Contents:
    advanced
    error_handling
    hook_dependencies
+   changelog
    api
 
 
