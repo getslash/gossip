@@ -88,3 +88,16 @@ class RegisteredHook(object):
     def trigger(self):
         gossip.trigger(self.name, **self.kwargs)
 
+
+
+@pytest.fixture
+def checkpoint():
+    return Checkpoint()
+
+
+class Checkpoint(object):
+
+    called = False
+
+    def __call__(self):
+        self.called = True

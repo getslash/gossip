@@ -46,6 +46,11 @@ Hook Unregistration
 
 .. autofunction:: gossip.unregister_token
 
+Hook Muting
+-----------
+
+.. autofunction:: gossip.mute_context
+
 Hook Objects
 ------------
 

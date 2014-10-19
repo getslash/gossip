@@ -1,16 +1,18 @@
 import functools
 import logging
 import sys
+from contextlib import contextmanager
+from types import GeneratorType
 
-from . import registry
-from . import groups
-from ._compat import string_types, itervalues
+from . import groups, registry
+from ._compat import itervalues, string_types
 from .exceptions import (CannotResolveDependencies, HookNotFound,
                          NameAlreadyUsed, NotNowException, UndefinedHook,
                          UnsupportedHookTags)
 from .registration import Registration
 
 _logger = logging.getLogger(__name__)
+
 
 class Hook(object):
 
@@ -36,7 +38,8 @@ class Hook(object):
         registry.hooks.pop(self.full_name)
 
     def set_tags(self, tags):
-        assert not self.tags, "Cannot override exists tags {0} with {1}".format(self.tags, tags)
+        assert not self.tags, "Cannot override exists tags {0} with {1}".format(
+            self.tags, tags)
         self.tags = tags
 
     def get_registrations(self):
@@ -62,11 +65,13 @@ class Hook(object):
         normalize_tags = lambda tag_: set(tag_) if tag_ is not None else set()
         extra_tags = normalize_tags(tags) - normalize_tags(self.tags)
         if extra_tags:
-            raise UnsupportedHookTags("hook {0} support {1} tags, not: {2}".format(self.full_name, self.tags, extra_tags))
+            raise UnsupportedHookTags("hook {0} support {1} tags, not: {2}".format(
+                self.full_name, self.tags, extra_tags))
 
     def validate_strict(self, registrations_to_validate=None):
         if not self._defined:
-            raise UndefinedHook("hook {0} wasn't defined yet".format(self.full_name))
+            raise UndefinedHook(
+                "hook {0} wasn't defined yet".format(self.full_name))
         if registrations_to_validate is None:
             registrations_to_validate = self._registrations
         for registration in registrations_to_validate:
@@ -90,6 +95,9 @@ class Hook(object):
         del self._registrations[:]
 
     def trigger(self, kwargs, tags=None):
+        if self.full_name in _muted_stack[-1]:
+            return
+
         self.validate_tags(tags)
         exception_policy = self.group.get_exception_policy()
 
@@ -170,6 +178,7 @@ def get_hook(hook_name):
     except KeyError:
         raise HookNotFound("Hook {0} does not exist".format(hook_name))
 
+
 def create_hook(hook_name, **kwargs):
     """Creates a hook with the given full name, creating intermediate groups if necessary
     """
@@ -225,7 +234,8 @@ def register(func=None, hook_name=None, token=None, tags=None):
     if func is None:
         return functools.partial(register, hook_name=hook_name, token=token, tags=tags)
     assert hook_name is not None
-    registration = get_or_create_hook(hook_name).register(func, token=token, tags=tags)
+    registration = get_or_create_hook(
+        hook_name).register(func, token=token, tags=tags)
     assert registration
     return func
 
@@ -243,3 +253,22 @@ def unregister_all(hook_name):
 
 def get_all_hooks():
     return list(itervalues(registry.hooks))
+
+
+_muted_stack = [set()]
+
+
+@contextmanager
+def mute_context(hook_names):
+    """A context manager, during the execution of which the specified hook names will be ignored. Any code that tries to
+    trigger these hooks will trigger no callback.
+
+    :type hook_names: list, tuple or generator of full hook names to mute
+    """
+    if not isinstance(hook_names, (list, tuple, GeneratorType)):
+        raise TypeError('hook names to mute must be a list or a tuple')
+    _muted_stack.append(_muted_stack[-1] | set(hook_names))
+    try:
+        yield
+    finally:
+        _muted_stack.pop(-1)

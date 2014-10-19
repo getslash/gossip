@@ -139,3 +139,15 @@ However, in this way the hook is never defined for you:
 		HookNotFound: ...
 		
 
+Muting Hooks
+------------
+
+You can selectively mute hooks (prevent their callbacks from being called) through the :func:`.mute_context` context:
+
+.. code-block:: python
+
+		>>> def function_that_triggers_hooks():
+		...     gossip.trigger('my.hook.name')
+
+		>>> with gossip.mute_context(['my.hook.name']):
+		...     function_that_triggers_hooks()  # <--- nothing happens

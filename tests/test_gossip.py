@@ -156,3 +156,27 @@ def test_nested_groups():
 
     assert gossip.get_group("a").name == "a"
     assert gossip.get_group("a.b").name == "b"
+
+
+def test_mute_trigger(checkpoint):
+
+    @gossip.register('a.b.c')
+    def handler():
+        checkpoint()
+
+    with gossip.mute_context(['a.b.c']):
+        gossip.trigger('a.b.c')
+
+    assert not checkpoint.called
+
+    gossip.trigger('a.b.c')
+
+    assert checkpoint.called
+
+
+@pytest.mark.parametrize('arg', ['', 'name', 2, 2.0, True])
+def test_mute_accepts_only_lists(arg):
+
+    with pytest.raises(TypeError):
+        with gossip.mute_context(arg):
+            pass
