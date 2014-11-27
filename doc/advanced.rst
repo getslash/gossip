@@ -10,18 +10,18 @@ Hooks can receive arguments, which are then passed to the handlers.
    
 		>>> import gossip
 
-		>>> @gossip.register("with_arguments")
+		>>> @gossip.register('with_arguments')
 		... def handler(a, b, c):
-		...     print("Called: {0} {1} {2}".format(a, b, c))
+		...     print('Called: {0} {1} {2}'.format(a, b, c))
 		
-		>>> gossip.trigger("with_arguments", a=1, b=2, c=3)
+		>>> gossip.trigger('with_arguments', a=1, b=2, c=3)
 		Called: 1 2 3
 
 Note that argument mismatches means a runtime error:
 
 .. code-block:: python
 		
-		>>> gossip.trigger("with_arguments", a=1) # doctest: +IGNORE_EXCEPTION_DETAIL
+		>>> gossip.trigger('with_arguments', a=1) # doctest: +IGNORE_EXCEPTION_DETAIL
 		Traceback (most recent call last):
 		 ...
 		TypeError: handler() takes exactly 3 arguments (1 given)
@@ -29,6 +29,26 @@ Note that argument mismatches means a runtime error:
 .. note::
    Since hook handlers are likely to be spread across many locations in your projects, argument ordering changes make your code more likely to break. This is why gossip forces all arguments to be passed by keywords, and not as positionals.
 
+
+Hook Tags
+---------
+
+Hooks can receive tags, enabling you to divide callbacks into several categories.
+
+.. code-block:: python
+
+		>>> @gossip.register('hook', tags=['a'])
+		... def callback_a():
+		...     print('A called')
+		>>> @gossip.register('hook', tags=['b'])
+		... def callback_a():
+		...     print('B called')
+		>>> gossip.trigger_with_tags('hook', tags=['a'])
+		A called
+		>>> gossip.trigger_with_tags('hook', tags=['b'])
+		B called
+
+.. note:: registering with multiple tags will fire the callback if *any* of the tags match.
 
 
 Defining Hooks Explicitly
@@ -64,20 +84,20 @@ By default, handlers can be registered to hooks that haven't been :func:`defined
 
 .. code-block:: python
 
-		>>> @gossip.register("my_group.on_initialize")
+		>>> @gossip.register('my_group.on_initialize')
 		... def handler():
 		...     pass
 
-		>>> gossip.trigger("my_group.on_initailize") # spot the difference?
+		>>> gossip.trigger('my_group.on_initailize') # spot the difference?
 
 To do this, you can make any hook group into a *strict group*, meaning it requires registered hooks to be properly defined first:
 
 .. code-block:: python
 
-		>>> group = gossip.create_group("some_group")
+		>>> group = gossip.create_group('some_group')
 		>>> group.set_strict()
 
-		>>> @gossip.register("some_group.nonexisting") # doctest: +IGNORE_EXCEPTION_DETAIL
+		>>> @gossip.register('some_group.nonexisting') # doctest: +IGNORE_EXCEPTION_DETAIL
 		... def handler():
 		...     pass
 		Traceback (most recent call last):
@@ -88,8 +108,8 @@ This also works if you set a group as a strict group *after* you registered hook
 
 .. code-block:: python
 
-		>>> group = gossip.create_group("other_group")
-		>>> @gossip.register("other_group.nonexisting")
+		>>> group = gossip.create_group('other_group')
+		>>> @gossip.register('other_group.nonexisting')
 		... def handler():
 		...     pass
 
@@ -106,15 +126,15 @@ Handlers can be registered with *tokens*. A token is anything that supports equa
 
 .. code-block:: python
 
-		>>> @gossip.register("some_hook", token="token1")
+		>>> @gossip.register('some_hook', token='token1')
 		... def handler1():
 		...     pass
 
-		>>> @gossip.register("some_hook", token="token1")
+		>>> @gossip.register('some_hook', token='token1')
 		... def handler2():
 		...     pass
 
-		>>> gossip.unregister_token("token1") # unregisters all handlers of all hooks that were registered with 'token1'
+		>>> gossip.unregister_token('token1') # unregisters all handlers of all hooks that were registered with 'token1'
 
 
 
