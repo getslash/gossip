@@ -50,6 +50,8 @@ Hooks can receive tags, enabling you to divide callbacks into several categories
 
 .. note:: registering with multiple tags will fire the callback if *any* of the tags match.
 
+.. note:: hook tags have a special relationship to strictness, see :ref:`below <tag_strictness>` for more details.
+
 
 Defining Hooks Explicitly
 -------------------------
@@ -117,7 +119,25 @@ This also works if you set a group as a strict group *after* you registered hook
 		Traceback (most recent call last):
 		   ...
 		UndefinedHook: hook 'other_group.nonexisting' was already registered, but not defined
-		
+
+.. _tag_strictness:
+
+Strictness and Tags
+~~~~~~~~~~~~~~~~~~~
+
+Strict hooks always perform checks on the tags that are passed to them:
+
+.. code-block:: python
+       
+       >>> gossip.create_group('strict_group').set_strict()
+       >>> _ = gossip.define('strict_group.hook1', tags=['a', 'b'])
+       >>> @gossip.register('strict_group.hook1', tags=['c']) # doctest: +IGNORE_EXCEPTION_DETAIL
+       ... def f():
+       ...     pass
+       Traceback (most recent call last):
+           ...
+       UnsupportedHookTags: ...
+       		
 
 Token Registration
 ------------------
