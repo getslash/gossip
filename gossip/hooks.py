@@ -123,7 +123,7 @@ class Hook(object):
                 if deferred:
                     if not any_resolved:
                         raise CannotResolveDependencies(
-                            "Cannot resolve handler dependencies")
+                            "Cannot resolve handler dependencies for {0}".format(self))
                     registrations = deferred
                     deferred = []
                 else:
