@@ -1,6 +1,8 @@
 Changelog
 =========
 
+* :release:`0.9.1 <15-01-2015>`
+* :bug:`-` Registration objects had no proper ``__repr__`` implementation
 * :release:`0.9.0 <19-10-2014>`
 * :feature:`4` Added support for muting hooks
 * :release:`0.8.0 <5-8-2014>`
