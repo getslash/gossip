@@ -59,3 +59,17 @@ def test_strict_groups(steps):
     )
     for step_func in steps:
         step_func(ctx)
+
+def test_make_group_not_strict():
+    group = gossip.get_or_create_group('group')
+    subgroup = gossip.get_or_create_group('group.sub')
+    assert not group.is_strict()
+    assert not subgroup.is_strict()
+
+    group.set_strict()
+    assert group.is_strict()
+    assert subgroup.is_strict()
+
+    group.set_strict(False)
+    assert not group.is_strict()
+    assert not subgroup.is_strict()

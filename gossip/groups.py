@@ -42,14 +42,17 @@ class Group(object):
         for child in list(itervalues(self._children)):
             child.undefine()
 
-    def set_strict(self):
-        """Marks this group as a strict group, meaning all hooks registered must be defined in advance"""
+    def set_strict(self, strict=True):
+        """Marks this group as a strict group, meaning all hooks registered must be defined in advance
+
+        :param strict: controls whether or not this group should be turned to strict
+        """
         for child in itervalues(self._children):
             if isinstance(child, Group):
-                child.set_strict()
-            else:
+                child.set_strict(strict)
+            elif strict:
                 child.validate_strict()
-        self._strict = True
+        self._strict = strict
 
     def get_undefined_hooks(self):
         returned = [
