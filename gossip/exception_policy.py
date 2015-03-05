@@ -1,3 +1,4 @@
+import sys
 from contextlib import contextmanager
 
 from ._compat import reraise
@@ -8,7 +9,11 @@ class ExceptionPolicy(object):
     @contextmanager
     def context(self):
         ctx = TriggerContext()
-        yield ctx
+        try:
+             yield ctx
+        except:
+            exc_info = sys.exc_info()
+            self.handle_exception(ctx, exc_info)
         self._handle_trigger_end(ctx)
 
     def handle_exception(self, ctx, exc_info):
