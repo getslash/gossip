@@ -28,7 +28,6 @@ class Hook(object):
         registry.hooks[self.full_name] = self
         self._registrations = []
         self._arg_names = arg_names
-        self._swallow_exceptions = False
         self._trigger_internal_hooks = self.full_name != "gossip.on_handler_exception"
         self._defined = False
         self.doc = doc
