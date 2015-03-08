@@ -1,14 +1,20 @@
+import logging
 from contextlib import contextmanager
 
 from ._compat import reraise
 
+_logger = logging.getLogger(__name__)
 
 class ExceptionPolicy(object):
 
     @contextmanager
     def context(self):
         ctx = TriggerContext()
-        yield ctx
+        try:
+            yield ctx
+        except:
+            _logger.debug('Caught exception while calling hooks', exc_info=True)
+            raise
         self._handle_trigger_end(ctx)
 
     def handle_exception(self, ctx, exc_info):
