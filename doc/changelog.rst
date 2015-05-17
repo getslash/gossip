@@ -1,6 +1,7 @@
 Changelog
 =========
 
+* :feature:`9` Add support for registration blueprints
 * :release:`0.10.0 <09-02-2015>`
 * :feature:`6` Add option to disable group strictness
 * :release:`0.9.1 <15-01-2015>`

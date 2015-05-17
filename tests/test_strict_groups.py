@@ -6,6 +6,18 @@ from .utils import TestSteps, _noop
 import pytest
 
 
+def test_undefined_hooks_have_no_side_effects():
+    assert gossip.get_all_registrations() == []
+    gossip.get_or_create_group('group').set_strict()
+
+    for retry in range(5):
+        with pytest.raises(UndefinedHook):
+            @gossip.register('group.hook')
+            def handler():
+                pass
+    assert gossip.get_all_registrations() == []
+
+
 steps = TestSteps()
 
 @steps.add

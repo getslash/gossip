@@ -253,6 +253,10 @@ def unregister_all(hook_name):
 def get_all_hooks():
     return list(itervalues(registry.hooks))
 
+def get_all_registrations():
+    return [reg for hook in get_all_hooks()
+            for reg in hook.get_registrations()]
+
 
 _muted_stack = [set()]
 

@@ -191,3 +191,32 @@ You can selectively mute hooks (prevent their callbacks from being called) throu
 
 		>>> with gossip.mute_context(['my.hook.name']):
 		...     function_that_triggers_hooks()  # <--- nothing happens
+
+
+Registration Blueprints
+-----------------------
+
+In some cases you may want to register or unregister several hooks at once, for instance when implementing plugins that can load and unload on demand. Registration blueprints are just for that:
+
+.. code-block:: python
+       
+       >>> from gossip import Blueprint
+       >>> my_blueprint = Blueprint()
+       >>> @my_blueprint.register('hook_name')
+       ... def hook_handler():
+       ...     print('called!')
+
+The code above doesn't really do anything and no hook is actually registered. Triggering your hook will not call the handler:
+
+.. code-block:: python
+       
+       >>> gossip.trigger('hook_name')
+
+You can install or uninstall your blueprint as a whole using :func:`gossip.Blueprint.install`/:func:`gossip.Blueprint.uninstall`:
+
+.. code-block:: python
+       
+       >>> my_blueprint.install()
+       >>> gossip.trigger('hook_name')
+       called!
+       >>> my_blueprint.uninstall()

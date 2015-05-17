@@ -67,6 +67,12 @@ Hook Groups
 .. autoclass:: gossip.groups.Group
   :members:
 
+Blueprints
+----------
+
+.. autoclass:: gossip.Blueprint
+  :members:
+
 Exceptions
 ----------
 
