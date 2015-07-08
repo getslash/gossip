@@ -30,7 +30,15 @@ class Hook(object):
         self._arg_names = arg_names
         self._trigger_internal_hooks = self.full_name != "gossip.on_handler_exception"
         self._defined = False
+        self._pre_trigger_callbacks = []
         self.doc = doc
+
+    def add_pre_trigger_callback(self, callback):
+        self._pre_trigger_callbacks.append(callback)
+        return callback
+
+    def remove_pre_trigger_callback(self, callback):
+        self._pre_trigger_callbacks.remove(callback)
 
     def undefine(self):
         self.group.remove_child(self.name)
@@ -130,6 +138,8 @@ class Hook(object):
 
     def _call_registration(self, registration, kwargs):
         exc_info = None
+        for callback in self._pre_trigger_callbacks:
+            callback(registration, kwargs)
         try:
             registration(**kwargs)  # pylint: disable=star-args
         except NotNowException:

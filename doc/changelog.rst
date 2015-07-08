@@ -1,6 +1,7 @@
 Changelog
 =========
 
+* :feature:`10` Add support for pre-trigger callbacks
 * :feature:`9` Add support for registration blueprints
 * :release:`0.10.0 <09-02-2015>`
 * :feature:`6` Add option to disable group strictness

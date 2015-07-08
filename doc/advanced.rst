@@ -220,3 +220,15 @@ You can install or uninstall your blueprint as a whole using :func:`gossip.Bluep
        >>> gossip.trigger('hook_name')
        called!
        >>> my_blueprint.uninstall()
+
+Pre-Trigger Callbacks
+---------------------
+
+In some advanced scenarios you might want to add a callback before each registration being triggered on a specific hook. This can be done with :func:`gossip.hooks.Hook.add_pre_trigger_callback`:
+
+.. code-block:: python
+       
+       >>> hook = gossip.define('my_hook')
+       >>> @hook.add_pre_trigger_callback
+       ... def before_trigger(registration, kwargs):
+       ...     print('{0} is about to be called with {1}'.format(registration.func, kwargs))
