@@ -2,6 +2,7 @@ from . import registry
 from ._compat import itervalues, iteritems
 from .exception_policy import ExceptionPolicy, Inherit, RaiseImmediately
 from .exceptions import GroupNotFound, NameAlreadyUsed
+from .helpers import DONT_CARE
 
 
 class Group(object):
@@ -33,10 +34,26 @@ class Group(object):
         if hasattr(self, "_children"):
             self.undefine_children()
         self._strict = False
+        self._unconstrained_handler_priority = DONT_CARE
         self._children = {}
         self._parent_exception_policy = None
         self.set_exception_policy(
             RaiseImmediately() if self._parent is None else Inherit())
+
+    def set_unconstrained_handler_priority(self, priority):
+        """Controls when handlers without needs/provides specifications should be fired
+        relative to handlers with needs/provides.
+
+        :param priority: ``gossip.FIRST`` means that unconstrained handlers should be fired first, ``gossip.LAST`` means last
+        """
+        self._unconstrained_handler_priority = priority
+        for hook in self.iter_hooks():
+            hook.recompute_call_order()
+        for group in self.iter_subgroups():
+            group.set_unconstrained_handler_priority(priority)
+
+    def get_unconstrained_handler_priority(self):
+        return self._unconstrained_handler_priority
 
     def undefine_children(self):
         for child in list(itervalues(self._children)):

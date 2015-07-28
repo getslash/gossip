@@ -1,4 +1,5 @@
 import itertools
+from uuid import uuid4
 
 import gossip
 import gossip.hooks
@@ -101,3 +102,45 @@ class Checkpoint(object):
 
     def __call__(self):
         self.called = True
+
+
+class Timeline(object):
+
+    def __init__(self):
+        super(Timeline, self).__init__()
+        self.hook_name = 'parent_group_{0}.subgroup_{0}.hook_{1}'.format(uuid4(), uuid4())
+        self.timestamps = itertools.count(1000)
+
+    def get_group(self):
+        return gossip.get_group(self.hook_name.rsplit('.', 1)[0])
+
+    def get_parent_group(self):
+        return gossip.get_group(self.hook_name.split('.')[0])
+
+    def register(self, **kwargs):
+        evt = Event()
+        @gossip.register(self.hook_name, **kwargs)
+        def callback():
+            evt.timestamp = next(self.timestamps)
+        return evt
+
+    def trigger(self):
+        gossip.trigger(self.hook_name)
+
+@pytest.fixture
+def timeline():
+    return Timeline()
+
+class Event(object):
+
+    _timestamp = None
+
+    @property
+    def timestamp(self):
+        assert self._timestamp is not None
+        return self._timestamp
+
+    @timestamp.setter
+    def timestamp(self, t):
+        assert self._timestamp is None
+        self._timestamp = t

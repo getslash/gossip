@@ -1,5 +1,5 @@
-Hook Dependencies
-=================
+Managing Hook Dependencies
+==========================
 
 In most projects you are likely to bind multiple handlers to each hook. As you further separate different services to modules and decouple complex code, you may encounter cases in which a handler needs to execute *only after* another handler has finished. This sounds trivial, but it gets tricky as you take into account module load order.
 
@@ -55,7 +55,7 @@ Now the results of your program vary unexpectedly depending on your import order
 		import module2
 		import module1
 
-Gossip aims to help you with such issues, and still leave you with the ability to register handlers from anywhere in your code.
+Gossip aims to help you with such issues, and still leave you with the ability to register handlers from anywhere in your code. It provides two main ways of controlling hook dependencies: Signaling helpers and needs/provides markers.
 
 Using the Signaling Helpers
 ---------------------------
@@ -98,8 +98,70 @@ not_now
 		...     if not some_condition():
 		...         gossip.not_now()
 
+Using Needs/Provides Markers
+----------------------------
+
+You can also tackle dependencies at the point of registration, stating that a certain registration needs to happen before or after another registration. The way to do that is stating that the registration *needs* or *provides* something compared to another registration. For example:
+
+.. code-block:: python
+       
+       >>> @gossip.register("some_hook", needs=["phase1_complete"])
+       ... def handler1():
+       ...     print("Handler1")
+
+       >>> @gossip.register("some_hook", provides=["phase1_complete"])
+       ... def phase1_prepare_something():
+       ...     print("Preparing phase 1")
+
+       >>> @gossip.register("some_hook", provides=["phase1_complete"])
+       ... def phase1_prepare_another_thing():
+       ...     print("Still preparing phase 1")
+
+       >>> gossip.trigger("some_hook")
+       Preparing phase 1
+       Still preparing phase 1
+       Handler1
+
+``needs`` and ``provides`` are mere strings representing a resource or constraint that can be referred to as needed or provided by hook handlers. It merely means that any handler needing a certain thing must be called after the handler providing the thing had fired.
+
+In the above example, the registrations are fired in order to satisfy the needs/provides dependencies. You'll note that multiple handlers can ``provide`` the same thing, which means that all of them must be fired before the handler that ``needs`` that thing.
+
+Dealing with Regular Handlers in Needs/Provides Scenarios
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Hook handlers that do not specify andy needs/provides constraints, by default, are considered free handlers that can be fired at any point.
+
+In some cases though, you want to make sure those handlers fire only after or before all the constrained handlers are fired. To control this, you should use the :func:`gossip.group.Group.set_unconstrained_handler_priority`:
+
+.. code-block:: python
+       
+       >>> @gossip.register('my_group.my_hook')
+       ... def dontcare():
+       ...     print("I don't care")
+
+       >>> @gossip.register('my_group.my_hook', provides=['something'])
+       ... def i_care():
+       ...     print("I care!")
+
+       >>> gossip.trigger('my_group.my_hook')
+       I don't care
+       I care!
+
+       >>> gossip.get_group('my_group').set_unconstrained_handler_priority(gossip.FIRST)
+       >>> gossip.trigger('my_group.my_hook')
+       I don't care
+       I care!
+
+       >>> gossip.get_group('my_group').set_unconstrained_handler_priority(gossip.LAST)
+       >>> gossip.trigger('my_group.my_hook')
+       I care!
+       I don't care
+
+
+
+
 Circular and Unmet Dependencies
 -------------------------------
 
-Gossip detects dependencies that aren't resolved in time, such as circular dependencies or cases like ``gossip.wait_for(False)``. In such cases, :class:`gossip.exceptions.CannotResolveDependencies` is raised immediately.
+In both approaches to dependency management, Gossip detects dependencies that aren't resolved in time, such as circular dependencies or cases like ``gossip.wait_for(False)``. In such cases, :class:`gossip.exceptions.CannotResolveDependencies` is raised immediately.
 

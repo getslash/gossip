@@ -2,6 +2,8 @@ import sys
 import itertools
 import types
 
+from ._compat import string_types
+
 PY26 = sys.version_info < (2, 7)
 
 _registration_id = itertools.count()
@@ -11,12 +13,14 @@ _token_registrations = {}
 
 class Registration(object):
 
-    def __init__(self, func, hook, token=None, tags=None):
+    def __init__(self, func, hook, token=None, tags=None, needs=None, provides=None):
         super(Registration, self).__init__()
         self.id = next(_registration_id)
         self.hook = hook
         self.func = func
         self.token = token
+        self.needs = _normalize_deps(needs)
+        self.provides = _normalize_deps(provides)
         self.tags = set(tags) if tags else None
         if not isinstance(func, (classmethod, staticmethod, types.MethodType)) and not hasattr(func, "gossip"):
             func.gossip = self
@@ -44,3 +48,11 @@ class Registration(object):
 
     def __repr__(self):
         return repr(self.func)
+
+
+def _normalize_deps(deps):
+    if not deps:
+        deps = ()
+    if isinstance(deps, string_types):
+        deps = [deps]
+    return frozenset(deps)

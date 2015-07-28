@@ -10,6 +10,7 @@ from .exceptions import (CannotResolveDependencies, HookNotFound,
                          NameAlreadyUsed, NotNowException, UndefinedHook,
                          UnsupportedHookTags)
 from .registration import Registration
+from .utils import topological_sort_registrations
 
 _logger = logging.getLogger(__name__)
 
@@ -31,6 +32,7 @@ class Hook(object):
         self._trigger_internal_hooks = self.full_name != "gossip.on_handler_exception"
         self._defined = False
         self._pre_trigger_callbacks = []
+        self._unmet_deps = frozenset()
         self.doc = doc
 
     def add_pre_trigger_callback(self, callback):
@@ -84,14 +86,25 @@ class Hook(object):
         for registration in registrations_to_validate:
             self.validate_tags(registration.tags, is_strict=True)
 
-    def register(self, func, token=None, tags=None):
+    def register(self, func, token=None, tags=None, needs=None, provides=None):
         """Registers a new handler to this hook
         """
-        returned = Registration(func, self, token=token, tags=tags)
+        returned = Registration(func, self, token=token, tags=tags, needs=needs, provides=provides)
         if self.group.is_strict():
             self.validate_strict([returned])
         self._registrations.append(returned)
+        if returned.needs or returned.provides:
+            try:
+                self.recompute_call_order()
+            except:
+                self._registrations.pop()
+                raise
         return returned
+
+    def recompute_call_order(self):
+        self._registrations = topological_sort_registrations(self._registrations, unconstrained_priority=self.group.get_unconstrained_handler_priority())
+        self._unmet_deps = frozenset(n for r in self._registrations for n in r.needs) - frozenset(p for r in self._registrations for p in r.provides)
+
 
     def unregister(self, registration):
         assert registration.hook is self
@@ -102,6 +115,8 @@ class Hook(object):
         del self._registrations[:]
 
     def trigger(self, kwargs, tags=None):
+        if self._unmet_deps:
+            raise CannotResolveDependencies('Hook {0!r} has unmet dependencies: {1}'.format(self, ', '.join(map(str, self._unmet_deps))))
         if self.full_name in _muted_stack[-1]:
             return
 
@@ -226,12 +241,14 @@ def define(hook_name, **kwargs):
     return returned
 
 
-def register(func=None, hook_name=None, token=None, tags=None):
+def register(func=None, hook_name=None, token=None, tags=None, needs=None, provides=None):
     """Registers a new function to a hook
 
     :param hook_name: full name of hook to register to
     :param token: token to register with. This can be used to later unregister a group of handlers which have a
            specific token
+    :params needs: list of keywords (strings) that this registration needs, causing any hook that provides any of them to happen before this registration
+    :params provides: list of keywords (strings) that this registration provides
     :returns: The function (for decorator chaining)
 
     """
@@ -241,10 +258,10 @@ def register(func=None, hook_name=None, token=None, tags=None):
         func = None
 
     if func is None:
-        return functools.partial(register, hook_name=hook_name, token=token, tags=tags)
+        return functools.partial(register, hook_name=hook_name, token=token, tags=tags, needs=needs, provides=provides)
     assert hook_name is not None
     registration = get_or_create_hook(
-        hook_name).register(func, token=token, tags=tags)
+        hook_name).register(func, token=token, tags=tags, needs=needs, provides=provides)
     assert registration
     return func
 
