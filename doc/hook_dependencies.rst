@@ -131,7 +131,7 @@ Dealing with Regular Handlers in Needs/Provides Scenarios
 
 Hook handlers that do not specify andy needs/provides constraints, by default, are considered free handlers that can be fired at any point.
 
-In some cases though, you want to make sure those handlers fire only after or before all the constrained handlers are fired. To control this, you should use the :func:`gossip.group.Group.set_unconstrained_handler_priority`:
+In some cases though, you want to make sure those handlers fire only after or before all the constrained handlers are fired. To control this, you should use the :func:`gossip.groups.Group.set_unconstrained_handler_priority`:
 
 .. code-block:: python
        
