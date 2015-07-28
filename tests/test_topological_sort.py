@@ -18,7 +18,7 @@ def test_cycles():
 @pytest.fixture(params=[
     (set([(0, 1), (1, 2)]), [0, 1, 2, 3, 4]),
     (set([(4, 0), (2, 4), (3, 2)]), [1, 3, 2, 4, 0]),
-    (set([(4, 0), (2, 4), (3, 1), (3, 2)]), [3, 1, 2, 4, 0]),
+    (set([(4, 0), (2, 4), (3, 1), (3, 2)]), [3, 2, 4, 0, 1]),
     ])
 def graph_expected(request):
     return request.param

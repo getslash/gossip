@@ -22,7 +22,7 @@ def test_needs_provides_complex(timeline):
     timeline.trigger()
 
     assert sorted(events, key=lambda e: e.timestamp) == [
-        events[5], events[2], events[3], events[1], events[0], events[4]
+        events[5], events[3], events[2], events[1], events[0], events[4]
     ]
 
 

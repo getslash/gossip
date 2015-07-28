@@ -110,6 +110,7 @@ class Timeline(object):
         super(Timeline, self).__init__()
         self.hook_name = 'parent_group_{0}.subgroup_{0}.hook_{1}'.format(uuid4(), uuid4())
         self.timestamps = itertools.count(1000)
+        self.event_index = itertools.count()
 
     def get_group(self):
         return gossip.get_group(self.hook_name.rsplit('.', 1)[0])
@@ -118,7 +119,7 @@ class Timeline(object):
         return gossip.get_group(self.hook_name.split('.')[0])
 
     def register(self, **kwargs):
-        evt = Event()
+        evt = Event(next(self.event_index))
         @gossip.register(self.hook_name, **kwargs)
         def callback():
             evt.timestamp = next(self.timestamps)
@@ -134,6 +135,13 @@ def timeline():
 class Event(object):
 
     _timestamp = None
+
+    def __init__(self, index):
+        super(Event, self).__init__()
+        self.index = index
+
+    def __repr__(self):
+        return '<Evt {0}>'.format(self.index)
 
     @property
     def timestamp(self):

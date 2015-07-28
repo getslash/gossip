@@ -11,7 +11,7 @@ def topological_sort_registrations(registrations, unconstrained_priority=DONT_CA
 
 
 def _topological_sort(indices, graph):
-    independent = set(indices) - set(m for n, m in graph)
+    independent = sorted(set(indices) - set(m for n, m in graph), reverse=True)
     returned = []
     while independent:
         n = independent.pop()
@@ -30,7 +30,7 @@ def _topological_sort(indices, graph):
                         break
                 else:
                     # no other incoming edges to m
-                    independent.add(m)
+                    independent.append(m)
     if graph:
         raise CannotResolveDependencies('Cyclic dependency detected')
     return returned
