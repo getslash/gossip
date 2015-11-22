@@ -20,6 +20,8 @@ Hook Triggering
 
 .. autofunction:: gossip.trigger
 
+.. autofunction:: gossip.trigger_with_tags
+
 Error Handling
 --------------
 

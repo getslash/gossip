@@ -180,6 +180,10 @@ def trigger(hook_name, **kwargs):
 
 
 def trigger_with_tags(hook_name, kwargs=None, tags=None):
+    """Triggers a hook by name, specifying the tags to use when triggering.
+    If the hook receives keyword arguments, they have to be passed using the *kwargs* parameter, and not via
+    direct keyword arguments
+    """
     hook = registry.hooks.get(hook_name)
     if hook is not None:
         hook.trigger(kwargs or {}, tags)
