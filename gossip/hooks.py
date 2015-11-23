@@ -12,12 +12,14 @@ from .exceptions import (CannotResolveDependencies, HookNotFound,
 from .registration import Registration
 from .utils import topological_sort_registrations
 
+from logbook.utils import log_deprecation_message
+
 _logger = logging.getLogger(__name__)
 
 
 class Hook(object):
 
-    def __init__(self, group, name, arg_names=(), doc=None):
+    def __init__(self, group, name, arg_names=(), doc=None, deprecated=False):
         super(Hook, self).__init__()
         self.group = group
         self.name = name
@@ -34,6 +36,7 @@ class Hook(object):
         self._pre_trigger_callbacks = []
         self._unmet_deps = frozenset()
         self.doc = doc
+        self.deprecated = deprecated
 
     def add_pre_trigger_callback(self, callback):
         self._pre_trigger_callbacks.append(callback)
@@ -89,6 +92,8 @@ class Hook(object):
     def register(self, func, token=None, tags=None, needs=None, provides=None):
         """Registers a new handler to this hook
         """
+        if self.deprecated:
+            log_deprecation_message('Hook {0} is deprecated!'.format(self.full_name), frame_correction=+1)
         returned = Registration(func, self, token=token, tags=tags, needs=needs, provides=provides)
         if self.group.is_strict():
             self.validate_strict([returned])

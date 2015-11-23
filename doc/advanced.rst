@@ -232,3 +232,14 @@ In some advanced scenarios you might want to add a callback before each registra
        >>> @hook.add_pre_trigger_callback
        ... def before_trigger(registration, kwargs):
        ...     print('{0} is about to be called with {1}'.format(registration.func, kwargs))
+
+
+Deprecating Hooks
+-----------------
+
+It is possible to define a hook as *deprecated*, meaning that registering on it will cause a deprecation:
+
+
+.. code-block:: python
+       
+       >>> hook = gossip.define('deprecated_hook', deprecated=True)

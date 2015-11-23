@@ -6,7 +6,9 @@ from setuptools import find_packages, setup
 with open(os.path.join(os.path.dirname(__file__), "gossip", "__version__.py")) as version_file:
     exec(version_file.read())  # pylint: disable=W0122
 
-_INSTALL_REQUIERS = []
+_INSTALL_REQUIERS = [
+    'logbook>=0.12.0',
+]
 
 setup(name="gossip",
       classifiers=[
