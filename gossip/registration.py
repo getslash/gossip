@@ -25,6 +25,11 @@ class Registration(object):
         if not isinstance(func, (classmethod, staticmethod, types.MethodType)) and not hasattr(func, "gossip"):
             func.gossip = self
 
+        self.valid = True
+
+    def invalidate(self):
+        self.valid = False
+
     def has_tags(self, tags):
         if tags is None:
             return True
@@ -44,6 +49,7 @@ class Registration(object):
         return True
 
     def __call__(self, *args, **kwargs):
+        assert self.valid
         return self.func(*args, **kwargs)
 
     def __repr__(self):

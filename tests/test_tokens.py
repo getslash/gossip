@@ -40,5 +40,33 @@ def test_group_only_token_unregistration(registrations):
     gossip.get_group("group2").unregister_token("token1")
     assert len(_get_all_registrations()) == 3
 
+
+def test_token_unregister_from_hook(checkpoint, token, hook_name):
+    # pylint: disable=unused-variable
+
+    @gossip.register(hook_name, token=token)
+    def handler():
+        gossip.unregister_token(token)
+    gossip.register(hook_name)(checkpoint)
+
+    gossip.trigger(hook_name)
+    assert checkpoint.called
+
+
+def test_token_unregister_from_hook_multiple_token_registrants(checkpoint, token, hook_name):
+    # pylint: disable=unused-variable
+
+    @gossip.register(hook_name, token=token)
+    def handler():
+        gossip.unregister_token(token)
+    gossip.register(hook_name)(checkpoint)
+    # the second token registration should not be called!
+    gossip.register(hook_name, token=token)(checkpoint)
+
+    gossip.trigger(hook_name)
+    assert checkpoint.num_times == 1
+
+
+
 def _get_all_registrations():
     return [registration for hook in gossip.get_all_hooks() for registration in hook.get_registrations()]

@@ -129,7 +129,9 @@ class Hook(object):
         with exception_policy.context() as ctx:
             while True:
                 any_resolved = False
-                for registration in registrations:
+                for registration in list(registrations):
+                    if not registration.valid:
+                        continue
                     if not registration.has_tags(tags):
                         continue
                     try:

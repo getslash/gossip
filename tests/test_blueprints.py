@@ -45,7 +45,7 @@ def test_uninstall(blueprint, checkpoint):
     blueprint.install()
     gossip.trigger('a')
     assert checkpoint.called
-    checkpoint.called = False
+    checkpoint.reset()
     blueprint.uninstall()
     gossip.trigger('a')
     assert not checkpoint.called

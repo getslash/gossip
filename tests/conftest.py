@@ -90,6 +90,10 @@ class RegisteredHook(object):
         gossip.trigger(self.name, **self.kwargs)
 
 
+@pytest.fixture
+def token():
+    return str(uuid4())
+
 
 @pytest.fixture
 def checkpoint():
@@ -98,10 +102,17 @@ def checkpoint():
 
 class Checkpoint(object):
 
-    called = False
+    num_times = 0
 
     def __call__(self):
-        self.called = True
+        self.num_times += 1
+
+    @property
+    def called(self):
+        return self.num_times > 0
+
+    def reset(self):
+        self.num_times = 0
 
 
 class Timeline(object):

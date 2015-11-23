@@ -121,6 +121,7 @@ class Group(object):
         for hook in self.iter_hooks():
             for registration in hook.get_registrations():
                 if registration.token == token:
+                    registration.invalidate()
                     registration.unregister()
         for group in self.iter_subgroups():
             group.unregister_token(token)
