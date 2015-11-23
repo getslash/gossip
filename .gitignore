@@ -7,3 +7,4 @@ flycheck-*
 dist
 .env
 .DS_Store
+.cache
