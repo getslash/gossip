@@ -1,14 +1,23 @@
 language: python
 sudo: false
 python:
-  - "2.6"
-  - "2.7"
-  - "3.3"
-  - "3.4"
-  - "3.5"
-  - "pypy"
+- '2.6'
+- '2.7'
+- '3.3'
+- '3.4'
+- '3.5'
+- pypy
 install:
-  - pip install -e .
-  - pip install -r test_requirements.txt
+- pip install -e .
+- pip install -r test_requirements.txt
 script:
-  - py.test tests 
+- py.test tests
+deploy:
+  provider: pypi
+  user: vmalloc
+  password:
+    secure: h+Pjy8kyp2b14/dnPqJul3azwrizEColFjC1VSahwbtWVRJ7w0uX0VT7ziOAARIMrxjS8cC/eJ6PGBGuFd0BXdTobK1danG/Wzqz6sV50bBGn1ZynzqxW+TIq7PSmLME4scUys1qpu5MTm4zxSDScYEU54mayhH/egoXtJD/o4I=
+  on:
+    tags: true
+    repo: vmalloc/gossip
+    branch: develop
