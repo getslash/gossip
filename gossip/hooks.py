@@ -123,6 +123,7 @@ class Hook(object):
         if self._unmet_deps:
             raise CannotResolveDependencies('Hook {0!r} has unmet dependencies: {1}'.format(self, ', '.join(map(str, self._unmet_deps))))
         if self.full_name in _muted_stack[-1]:
+            _logger.debug("Hook {!r} muted, skipping trigger", self)
             return
 
         self.validate_tags(tags)
