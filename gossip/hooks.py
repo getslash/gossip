@@ -1,5 +1,5 @@
 import functools
-import logging
+import logbook
 import sys
 from contextlib import contextmanager
 from types import GeneratorType
@@ -14,7 +14,7 @@ from .utils import topological_sort_registrations
 
 from logbook.utils import log_deprecation_message
 
-_logger = logging.getLogger(__name__)
+_logger = logbook.Logger(__name__)
 
 
 class Hook(object):
@@ -123,7 +123,7 @@ class Hook(object):
         if self._unmet_deps:
             raise CannotResolveDependencies('Hook {0!r} has unmet dependencies: {1}'.format(self, ', '.join(map(str, self._unmet_deps))))
         if self.full_name in _muted_stack[-1]:
-            _logger.debug("Hook {!r} muted, skipping trigger", self)
+            _logger.debug("Hook {0!r} muted, skipping trigger", self)
             return
 
         self.validate_tags(tags)

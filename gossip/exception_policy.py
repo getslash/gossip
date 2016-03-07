@@ -1,9 +1,9 @@
-import logging
+import logbook
 from contextlib import contextmanager
 
 from ._compat import reraise
 
-_logger = logging.getLogger(__name__)
+_logger = logbook.Logger(__name__)
 
 class ExceptionPolicy(object):
 

@@ -1,4 +1,3 @@
-import logging
 from munch import Munch
 from .utils import TestSteps, _noop
 
@@ -7,7 +6,6 @@ import gossip
 from gossip.exceptions import UndefinedHook, UnsupportedHookTags
 
 
-_logger = logging.getLogger(__name__)
 steps = TestSteps()
 
 @steps.add

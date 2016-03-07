@@ -1,11 +1,18 @@
 import itertools
 from uuid import uuid4
 
+import logbook
 import gossip
 import gossip.hooks
 import pytest
 
 hook_id = itertools.count()
+
+
+@pytest.fixture(autouse=True, scope='session')
+def setup_logging():
+    logbook.StderrHandler().push_application()
+    logbook.Flags(errors='raise').push_application()
 
 @pytest.fixture(autouse=True, scope="function")
 def clear_registrations():
