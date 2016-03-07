@@ -19,5 +19,5 @@ deploy:
     secure: h+Pjy8kyp2b14/dnPqJul3azwrizEColFjC1VSahwbtWVRJ7w0uX0VT7ziOAARIMrxjS8cC/eJ6PGBGuFd0BXdTobK1danG/Wzqz6sV50bBGn1ZynzqxW+TIq7PSmLME4scUys1qpu5MTm4zxSDScYEU54mayhH/egoXtJD/o4I=
   on:
     tags: true
-    repo: vmalloc/gossip
+    repo: getslash/gossip
     branch: develop
