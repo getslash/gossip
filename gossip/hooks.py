@@ -172,7 +172,7 @@ class Hook(object):
             if self._trigger_internal_hooks:
                 trigger("gossip.on_handler_exception",
                         handler=registration.func, exception=exc_info, hook=self)
-            _logger.debug("Exception occurred while calling %s",
+            _logger.debug("Exception occurred while calling {}",
                          registration, exc_info=exc_info)
             # TODO: debug here
         return exc_info
