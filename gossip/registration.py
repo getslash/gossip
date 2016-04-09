@@ -1,6 +1,7 @@
-import sys
 import itertools
+import sys
 import types
+from contextlib import contextmanager
 
 from ._compat import string_types
 
@@ -13,7 +14,7 @@ _token_registrations = {}
 
 class Registration(object):
 
-    def __init__(self, func, hook, token=None, tags=None, needs=None, provides=None):
+    def __init__(self, func, hook, token=None, tags=None, needs=None, provides=None, reentrant=True):
         super(Registration, self).__init__()
         self.id = next(_registration_id)
         self.hook = hook
@@ -21,6 +22,8 @@ class Registration(object):
         self.token = token
         self.needs = _normalize_deps(needs)
         self.provides = _normalize_deps(provides)
+        self.reentrant = reentrant
+        self._is_being_called = False
         self.tags = set(tags) if tags else None
         if not isinstance(func, (classmethod, staticmethod, types.MethodType)) and not hasattr(func, "gossip"):
             func.gossip = self
@@ -45,12 +48,20 @@ class Registration(object):
     def is_active(self):
         return self.hook is not None
 
+    def is_being_called(self):
+        return self._is_being_called
+
     def can_be_called(self):
         return True
 
     def __call__(self, *args, **kwargs):
         assert self.valid
-        return self.func(*args, **kwargs)
+        prev = self._is_being_called
+        try:
+            self._is_being_called = True
+            return self.func(*args, **kwargs)
+        finally:
+            self._is_being_called = prev
 
     def __repr__(self):
         return repr(self.func)

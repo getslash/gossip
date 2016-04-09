@@ -237,9 +237,25 @@ In some advanced scenarios you might want to add a callback before each registra
 Deprecating Hooks
 -----------------
 
+.. versionadded:: 1.1.0
+
 It is possible to define a hook as *deprecated*, meaning that registering on it will cause a deprecation:
 
 
 .. code-block:: python
        
        >>> hook = gossip.define('deprecated_hook', deprecated=True)
+
+
+Non-reentrant Hooks
+-------------------
+
+.. versionadded:: 2.0.0
+
+Gossip allows you to make specific registrations *non-reentrant*, meaning any attempt to trigger them while they're still being called will do nothing:
+
+.. code-block:: python
+       
+       >>> @gossip.register('hook', reentrant=False)
+       ... def handler():
+       ...     gossip.trigger('hook') # this will not cause a recursion since this handler is non-reentrant

@@ -170,3 +170,42 @@ class Event(object):
     def timestamp(self, t):
         assert self._timestamp is None
         self._timestamp = t
+
+
+class Counter(object):
+
+    _value = 0
+
+    def set(self, value):
+        self._value = value
+
+    def __nonzero__(self):
+        return bool(self._value)
+
+    def __bool__(self):
+        return bool(self._value)
+
+    def __iadd__(self, i):
+        self._value += i
+
+    add = __iadd__
+
+    def __isub__(self, i):
+        self._value -= i
+
+    sub = __isub__
+
+    def __eq__(self, other):
+        return self._value == other
+
+    def __ne__(self, other):
+        return not (self == other) # pylint: disable=superfluous-parens
+
+    def get(self):
+        return self._value
+
+    value = property(get)
+
+@pytest.fixture
+def counter():
+    return Counter()

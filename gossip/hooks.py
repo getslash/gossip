@@ -89,12 +89,12 @@ class Hook(object):
         for registration in registrations_to_validate:
             self.validate_tags(registration.tags, is_strict=True)
 
-    def register(self, func, token=None, tags=None, needs=None, provides=None):
+    def register(self, func, token=None, tags=None, needs=None, provides=None, reentrant=True):
         """Registers a new handler to this hook
         """
         if self.deprecated:
             log_deprecation_message('Hook {0} is deprecated!'.format(self.full_name), frame_correction=+1)
-        returned = Registration(func, self, token=token, tags=tags, needs=needs, provides=provides)
+        returned = Registration(func, self, token=token, tags=tags, needs=needs, provides=provides, reentrant=reentrant)
         if self.group.is_strict():
             self.validate_strict([returned])
         self._registrations.append(returned)
@@ -160,6 +160,8 @@ class Hook(object):
                     break
 
     def _call_registration(self, registration, kwargs):
+        if registration.is_being_called() and not registration.reentrant:
+            return
         exc_info = None
         for callback in self._pre_trigger_callbacks:
             callback(registration, kwargs)
@@ -253,14 +255,15 @@ def define(hook_name, **kwargs):
     return returned
 
 
-def register(func=None, hook_name=None, token=None, tags=None, needs=None, provides=None):
+def register(func=None, hook_name=None, token=None, tags=None, needs=None, provides=None, reentrant=True):
     """Registers a new function to a hook
 
     :param hook_name: full name of hook to register to
     :param token: token to register with. This can be used to later unregister a group of handlers which have a
            specific token
-    :params needs: list of keywords (strings) that this registration needs, causing any hook that provides any of them to happen before this registration
-    :params provides: list of keywords (strings) that this registration provides
+    :param needs: list of keywords (strings) that this registration needs, causing any hook that provides any of them to happen before this registration
+    :param provides: list of keywords (strings) that this registration provides
+    :param reentrent: specifies whether this hook can reenter (i.e. be called in recursion)
     :returns: The function (for decorator chaining)
 
     """
@@ -270,10 +273,10 @@ def register(func=None, hook_name=None, token=None, tags=None, needs=None, provi
         func = None
 
     if func is None:
-        return functools.partial(register, hook_name=hook_name, token=token, tags=tags, needs=needs, provides=provides)
+        return functools.partial(register, hook_name=hook_name, token=token, tags=tags, needs=needs, provides=provides, reentrant=reentrant)
     assert hook_name is not None
     registration = get_or_create_hook(
-        hook_name).register(func, token=token, tags=tags, needs=needs, provides=provides)
+        hook_name).register(func, token=token, tags=tags, needs=needs, provides=provides, reentrant=reentrant)
     assert registration
     return func
 
