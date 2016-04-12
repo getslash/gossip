@@ -27,8 +27,8 @@ import sys, os
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
 extensions = ['sphinx.ext.autodoc', 'alabaster', 'releases']
 
-releases_issue_uri = "https://github.com/vmalloc/gossip/issues/%s"
-releases_release_uri = "https://github.com/vmalloc/gossip/tree/%s"
+releases_issue_uri = "https://github.com/getslash/gossip/issues/%s"
+releases_release_uri = "https://github.com/getslash/gossip/tree/%s"
 
 
 # Add any paths that contain templates here, relative to this directory.
