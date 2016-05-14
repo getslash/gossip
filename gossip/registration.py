@@ -14,8 +14,10 @@ _token_registrations = {}
 
 class Registration(object):
 
-    def __init__(self, func, hook, token=None, tags=None, needs=None, provides=None, reentrant=True):
+    def __init__(self, func, hook, token=None, tags=None, needs=None, provides=None, reentrant=True, toggles_on=None, toggles_off=None):
         super(Registration, self).__init__()
+
+        assert not (toggles_off is not None and toggles_on is not None), 'Cannot specify both toggles_on and toggles_off'
         self.id = next(_registration_id)
         self.hook = hook
         self.func = func
@@ -29,6 +31,8 @@ class Registration(object):
             func.gossip = self
 
         self.valid = True
+        self._toggles_on = toggles_on
+        self._toggles_off = toggles_off
 
     def invalidate(self):
         self.valid = False
@@ -56,12 +60,30 @@ class Registration(object):
 
     def __call__(self, *args, **kwargs):
         assert self.valid
+
+        if not self._check_toggle():
+            return
+
         prev = self._is_being_called
         try:
             self._is_being_called = True
             return self.func(*args, **kwargs)
         finally:
             self._is_being_called = prev
+
+    def _check_toggle(self):
+
+        if self._toggles_on is not None:
+            if self._toggles_on.is_on():
+                return False
+            self._toggles_on.toggle()
+
+        if self._toggles_off is not None:
+            if self._toggles_off.is_off():
+                return False
+            self._toggles_off.toggle()
+
+        return True
 
     def __repr__(self):
         return repr(self.func)

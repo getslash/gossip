@@ -209,3 +209,7 @@ class Counter(object):
 @pytest.fixture
 def counter():
     return Counter()
+
+@pytest.fixture
+def counter2():
+    return Counter()

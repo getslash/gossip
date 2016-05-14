@@ -89,12 +89,12 @@ class Hook(object):
         for registration in registrations_to_validate:
             self.validate_tags(registration.tags, is_strict=True)
 
-    def register(self, func, token=None, tags=None, needs=None, provides=None, reentrant=True):
+    def register(self, func, token=None, tags=None, needs=None, provides=None, **kwargs):
         """Registers a new handler to this hook
         """
         if self.deprecated:
             log_deprecation_message('Hook {0} is deprecated!'.format(self.full_name), frame_correction=+1)
-        returned = Registration(func, self, token=token, tags=tags, needs=needs, provides=provides, reentrant=reentrant)
+        returned = Registration(func, self, token=token, tags=tags, needs=needs, provides=provides, **kwargs)
         if self.group.is_strict():
             self.validate_strict([returned])
         self._registrations.append(returned)
@@ -255,7 +255,7 @@ def define(hook_name, **kwargs):
     return returned
 
 
-def register(func=None, hook_name=None, token=None, tags=None, needs=None, provides=None, reentrant=True):
+def register(func=None, hook_name=None, token=None, tags=None, needs=None, provides=None, reentrant=True, toggles_on=None, toggles_off=None):
     """Registers a new function to a hook
 
     :param hook_name: full name of hook to register to
@@ -264,6 +264,8 @@ def register(func=None, hook_name=None, token=None, tags=None, needs=None, provi
     :param needs: list of keywords (strings) that this registration needs, causing any hook that provides any of them to happen before this registration
     :param provides: list of keywords (strings) that this registration provides
     :param reentrent: specifies whether this hook can reenter (i.e. be called in recursion)
+    :param toggles_on: specifies a toggle object to turn on when calling this registration. The registration will not be called if the toggle isn't off
+    :param toggles_off: specifies a toggle object to turn off when calling this registration. The registration will not be called if the toggle isn't on
     :returns: The function (for decorator chaining)
 
     """
@@ -273,10 +275,21 @@ def register(func=None, hook_name=None, token=None, tags=None, needs=None, provi
         func = None
 
     if func is None:
-        return functools.partial(register, hook_name=hook_name, token=token, tags=tags, needs=needs, provides=provides, reentrant=reentrant)
+        return functools.partial(
+            register,
+            hook_name=hook_name,
+            token=token,
+            tags=tags,
+            needs=needs,
+            provides=provides,
+            reentrant=reentrant,
+            toggles_on=toggles_on,
+            toggles_off=toggles_off)
     assert hook_name is not None
     registration = get_or_create_hook(
-        hook_name).register(func, token=token, tags=tags, needs=needs, provides=provides, reentrant=reentrant)
+        hook_name).register(
+            func, token=token, tags=tags, needs=needs, provides=provides, reentrant=reentrant,
+            toggles_on=toggles_on, toggles_off=toggles_off)
     assert registration
     return func
 

@@ -6,7 +6,7 @@ from .hooks import (define, get_all_hooks, get_all_registrations, get_hook, Hook
                     trigger_with_tags, mute_context
                     )
 from .blueprint import Blueprint
-from .helpers import FIRST, DONT_CARE, LAST
+from .helpers import FIRST, DONT_CARE, LAST, Toggle
 
 
 def set_exception_policy(policy):

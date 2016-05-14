@@ -259,3 +259,57 @@ Gossip allows you to make specific registrations *non-reentrant*, meaning any at
        >>> @gossip.register('hook', reentrant=False)
        ... def handler():
        ...     gossip.trigger('hook') # this will not cause a recursion since this handler is non-reentrant
+
+
+Toggle Hooks
+------------
+
+.. versionadded:: 2.0.0
+
+Consider this registration code:
+
+.. code-block:: python
+
+       state = ...
+
+       @gossip.register('start')
+       def start():
+           state.lock.acquire()
+
+       @gossip.register('end')
+       def end():
+           state.lock.release()
+
+
+Let's also assume this code is the one triggering the hooks:
+
+.. code-block:: python
+       
+       try:
+           gossip.trigger('start')
+           ...
+       finally:
+           gossip.trigger('end')
+
+Since Gossip's default exception policy is "raise immediately", this code might encounter a second failure during cleanup, since it will be releasing an un-acquired lock (**end** might be called without **start** being called first, because another registration might raise).
+
+Solving this on the triggering side is hard, and requiring all registrants to properly implement safeguards in these unexpected places is a hassle.
+
+For this purpose **toggle hooks** were created. These hooks rely on a shared *Toggle* object that can be either *on* or *off* (they're *off* when they're created). Each registration specified if it turns the toggle on or off:
+
+.. code-block:: python
+
+       from gossip import Toggle
+
+       _toggle = Toggle()
+       
+       @gossip.register('start', toggles_on=_toggle)
+       def start():
+           ...
+
+       @gossip.register('end', toggles_off=_toggle)
+       def end():
+           ...
+
+
+Now the earlier example no longer has the flaw we mentioned above. Gossip will ensure a registration will not be called if it would not change the currnet state of a toggle. 
