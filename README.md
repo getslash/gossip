@@ -38,7 +38,16 @@ Called
 
 ```
 
-For more advanced uses, please refer to [the documentation](http://gossip.readthedocs.org ) 
+# And There's A Lot More!
+
+Plain publish/subscribe is just the tip of the iceberg. Gossip is geared towards implementing complex plugin systems, and supports many more advanced features, such as:
+
+1. Token (bulk) unregistration of hooks
+2. Hook dependencies - control the order of hook callbacks, either implicitly or explicitly
+3. Non-reentrant hooks
+4. Custom exception handling strategies
+
+And much more. For more information, please refer to [the documentation](http://gossip.readthedocs.org ) 
 										
 
 # Licence
