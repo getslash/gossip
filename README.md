@@ -1,8 +1,7 @@
 |                       |                                                                                         |
 |-----------------------|-----------------------------------------------------------------------------------------|
-| Build Status          | ![Build Status] (https://secure.travis-ci.org/vmalloc/gossip.png?branch=master,develop) |
+| Build Status          | ![Build Status] (https://secure.travis-ci.org/getslash/gossip.png?branch=master,develop) |
 | Supported Versions    | ![Supported Versions] (https://img.shields.io/pypi/pyversions/gossip.svg)               |
-| Downloads             | ![Downloads] (https://img.shields.io/pypi/dm/gossip.svg)                                |
 | Latest Version        | ![Latest Version] (https://img.shields.io/pypi/v/gossip.svg)                            |
 
 

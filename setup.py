@@ -12,10 +12,10 @@ _INSTALL_REQUIERS = [
 
 setup(name="gossip",
       classifiers=[
-          "Programming Language :: Python :: 2.6",
           "Programming Language :: Python :: 2.7",
           "Programming Language :: Python :: 3.3",
           "Programming Language :: Python :: 3.4",
+          "Programming Language :: Python :: 3.5",
       ],
       description="Signaling and hooking library",
       license="BSD3",
