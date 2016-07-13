@@ -1,5 +1,4 @@
 import os
-import sys
 
 from setuptools import find_packages, setup
 
@@ -29,4 +28,4 @@ setup(name="gossip",
       install_requires=_INSTALL_REQUIERS,
       scripts=[],
       namespace_packages=[]
-      )
+     )

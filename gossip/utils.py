@@ -1,7 +1,7 @@
 import itertools
 
 from .exceptions import CannotResolveDependencies
-from .helpers import DONT_CARE, FIRST, LAST
+from .helpers import DONT_CARE, FIRST
 
 def topological_sort_registrations(registrations, unconstrained_priority=DONT_CARE):
     graph = _build_dependency_graph(registrations, unconstrained_priority=unconstrained_priority)

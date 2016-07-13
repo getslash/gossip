@@ -4,10 +4,10 @@ from gossip.utils import _topological_sort
 
 
 def test_topological_sort(indices, graph, expected):
-    sorted = _topological_sort(indices, set(graph))
-    assert len(sorted) == len(indices)
-    assert set(sorted) == set(indices)
-    assert sorted == expected
+    sorted_ = _topological_sort(indices, set(graph))
+    assert len(sorted_) == len(indices)
+    assert set(sorted_) == set(indices)
+    assert sorted_ == expected
 
 
 def test_cycles():
@@ -23,9 +23,11 @@ def test_cycles():
 def graph_expected(request):
     return request.param
 
+
 @pytest.fixture
 def graph(graph_expected):
     return graph_expected[0]
+
 
 @pytest.fixture
 def expected(graph_expected):

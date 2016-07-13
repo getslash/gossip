@@ -1,12 +1,12 @@
 from munch import Munch
-from .utils import TestSteps, _noop
+from .utils import UnitestSteps, _noop
 
 import pytest
 import gossip
 from gossip.exceptions import UndefinedHook, UnsupportedHookTags
 
 
-steps = TestSteps()
+steps = UnitestSteps()
 
 @steps.add
 def _make_group_strict(ctx):
@@ -36,7 +36,7 @@ def _make_register_hook(ctx):
 
     with raises_context:
         @gossip.register("group.defined_hook", tags=ctx.registeration_tags)
-        def handler():
+        def handler():  # pylint: disable=unused-variable
             pass
     ctx.registered_hook = True
 
@@ -120,7 +120,7 @@ def test_set_strict_with_subgroups_and_tags(hook_name):
     gossip.get_or_create_group(main_group_name).set_strict()
     with pytest.raises(UnsupportedHookTags):
         @gossip.register(hook_name, tags=("fake_tag",))
-        def handler2():
+        def handler2():  # pylint: disable=unused-variable
             pass
     with pytest.raises(UnsupportedHookTags):
         gossip.trigger_with_tags(hook_name, tags=("fake_tag",))

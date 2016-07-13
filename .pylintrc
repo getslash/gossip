@@ -1,0 +1,11 @@
+[MESSAGES CONTROL]
+disable=R,wrong-import-order,wrong-import-position,ungrouped-imports,missing-docstring,invalid-name,locally-disabled,attribute-defined-outside-init,redefined-outer-name,bad-builtin
+
+[REPORTS]
+reports=no
+
+[FORMAT]
+max-line-length=160
+
+[TYPECHECK]
+ignored-classes=Munch
