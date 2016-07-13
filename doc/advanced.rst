@@ -192,6 +192,18 @@ You can selectively mute hooks (prevent their callbacks from being called) throu
 		>>> with gossip.mute_context(['my.hook.name']):
 		...     function_that_triggers_hooks()  # <--- nothing happens
 
+However, both hooks and groups can forbid the usage of :func:`.mute_context` on them:
+
+.. code-block:: python
+
+		>>> hook = gossip.define('my_unmuted_hook')
+		>>> hook.should_not_be_muted()
+		>>> with gossip.mute_context(['my_unmuted_hook']):
+		...     pass
+		Traceback (most recent call last):
+		   ...
+		CannotMuteHooks: Hooks cannot be muted: my_unmuted_hook
+
 
 Registration Blueprints
 -----------------------
