@@ -88,12 +88,6 @@ class Group(object):
     def remove_child(self, child):
         self._children.pop(child)
 
-    def get_or_create_subgroup(self, name):
-        returned = self._subgroups.get(name)
-        if returned is None:
-            returned = self._subgroups[name] = Group(name, parent=self)
-        return returned
-
     def get_subgroups(self):
         return list(self.iter_subgroups())
 

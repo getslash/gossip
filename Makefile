@@ -1,7 +1,7 @@
 default: test
 
 test: env
-	.env/bin/py.test tests
+	.env/bin/py.test
 
 .PHONY: doc
 doc: env

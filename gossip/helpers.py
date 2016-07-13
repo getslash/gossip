@@ -1,6 +1,6 @@
 FIRST = 'FIRST'
 LAST = 'LAST'
-DONT_CARE='DONT_CARE'
+DONT_CARE = 'DONT_CARE'
 
 
 class Toggle(object):

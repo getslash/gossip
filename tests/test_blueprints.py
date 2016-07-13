@@ -1,21 +1,20 @@
 import gossip
 from gossip import Blueprint
-from gossip.exceptions import NameAlreadyUsed, UndefinedHook
-from munch import Munch
+from gossip.exceptions import UndefinedHook
 
 import pytest
 
 
-def test_multiple_functions_same_hook(blueprint, checkpoint):
+def test_multiple_functions_same_hook(blueprint, checkpoint):  # pylint: disable=unused-argument
 
     called = set()
 
     @blueprint.register('a')
-    def handler1():
+    def handler1():  # pylint: disable=unused-variable
         called.add(1)
 
     @blueprint.register('a')
-    def handler2():
+    def handler2():  # pylint: disable=unused-variable
         called.add(2)
 
     blueprint.install()
@@ -26,7 +25,7 @@ def test_multiple_functions_same_hook(blueprint, checkpoint):
 def test_blueprint(blueprint, checkpoint):
 
     @blueprint.register('a.b')
-    def handler():
+    def handler():  # pylint: disable=unused-variable
         checkpoint()
 
     gossip.trigger('a.b')
@@ -56,11 +55,11 @@ def test_exception_on_register(blueprint):
     gossip.get_or_create_group('group').set_strict()
 
     @blueprint.register('group.a')
-    def func():
+    def func():  # pylint: disable=unused-variable
         pass
 
     @blueprint.register('x')
-    def func():
+    def func():  # pylint: disable=function-redefined
         pass
 
     with pytest.raises(UndefinedHook):
@@ -72,11 +71,11 @@ def test_exception_on_register(blueprint):
 def test_blueprint_register_prefix(blueprint, checkpoint):
 
     @gossip.register('a')
-    def handler():
+    def handler():  # pylint: disable=unused-variable
         pass
 
     @blueprint.register('a')
-    def handler():
+    def handler():  # pylint: disable=function-redefined
         checkpoint()
 
     assert len(gossip.get_all_registrations()) == 1
