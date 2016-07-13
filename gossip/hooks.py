@@ -8,6 +8,7 @@ from . import groups, registry
 from ._compat import itervalues, string_types
 from .exceptions import (CannotResolveDependencies, HookNotFound,
                          NameAlreadyUsed, NotNowException, UndefinedHook,
+                         CannotMuteHooks,
                          UnsupportedHookTags)
 from .registration import Registration
 from .utils import topological_sort_registrations
@@ -19,7 +20,7 @@ _logger = logbook.Logger(__name__)
 
 class Hook(object):
 
-    def __init__(self, group, name, arg_names=(), doc=None, deprecated=False):
+    def __init__(self, group, name, arg_names=(), doc=None, deprecated=False, can_be_muted=None):
         super(Hook, self).__init__()
         self.group = group
         self.name = name
@@ -35,8 +36,17 @@ class Hook(object):
         self._defined = False
         self._pre_trigger_callbacks = []
         self._unmet_deps = frozenset()
+        self._can_be_muted = can_be_muted
         self.doc = doc
         self.deprecated = deprecated
+
+    def should_not_be_muted(self):
+        self._can_be_muted = False
+
+    def can_be_muted(self):
+        if self._can_be_muted is not None:
+            return self._can_be_muted
+        return self.group.can_be_muted()
 
     def add_pre_trigger_callback(self, callback):
         self._pre_trigger_callbacks.append(callback)
@@ -121,7 +131,8 @@ class Hook(object):
 
     def trigger(self, kwargs, tags=None):
         if self._unmet_deps:
-            raise CannotResolveDependencies('Hook {0!r} has unmet dependencies: {1}'.format(self, ', '.join(map(str, self._unmet_deps))))
+            deps_str = ', '.join(map(str, self._unmet_deps))
+            raise CannotResolveDependencies('Hook {0!r} has unmet dependencies: {1}'.format(self, deps_str))
         if self.full_name in _muted_stack[-1]:
             _logger.debug("Hook {0!r} muted, skipping trigger", self)
             return
@@ -166,17 +177,15 @@ class Hook(object):
         for callback in self._pre_trigger_callbacks:
             callback(registration, kwargs)
         try:
-            registration(**kwargs)  # pylint: disable=star-args
+            registration(**kwargs)
         except NotNowException:
             raise
-        except:
+        except Exception:  # pylint: disable=broad-except
             exc_info = sys.exc_info()
             if self._trigger_internal_hooks:
                 trigger("gossip.on_handler_exception",
                         handler=registration.func, exception=exc_info, hook=self)
-            _logger.debug("Exception occurred while calling {0}",
-                         registration, exc_info=exc_info)
-            # TODO: debug here
+            _logger.debug("Exception occurred while calling {0}", registration, exc_info=exc_info)
         return exc_info
 
     def __repr__(self):
@@ -308,9 +317,18 @@ def unregister_all(hook_name):
 def get_all_hooks():
     return list(itervalues(registry.hooks))
 
+
 def get_all_registrations():
     return [reg for hook in get_all_hooks()
             for reg in hook.get_registrations()]
+
+
+def _can_be_muted(hook_name):
+    try:
+        hook = get_hook(hook_name)
+    except HookNotFound:
+        return True
+    return hook.can_be_muted()
 
 
 _muted_stack = [set()]
@@ -326,6 +344,9 @@ def mute_context(hook_names):
     if not isinstance(hook_names, (list, tuple, GeneratorType)):
         raise TypeError('hook names to mute must be a list or a tuple')
     _muted_stack.append(_muted_stack[-1] | set(hook_names))
+    should_not_be_muted = [hook_name for hook_name in hook_names if not _can_be_muted(hook_name)]
+    if should_not_be_muted:
+        raise CannotMuteHooks('Hooks cannot be muted: {}'.format(', '.join(should_not_be_muted)))
     try:
         yield
     finally:

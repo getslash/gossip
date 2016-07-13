@@ -16,6 +16,9 @@ class NotNowException(Exception):
 class CannotResolveDependencies(Exception):
     pass
 
+class CannotMuteHooks(Exception):
+    pass
+
 class UndefinedHook(Exception):
     pass
 

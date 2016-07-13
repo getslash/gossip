@@ -10,7 +10,7 @@ def test_deprecated_hook():
         assert h.records == []
 
         @hook.register
-        def handler():
+        def handler():  # pylint: disable=unused-variable
             pass
 
         [r] = h.records

@@ -34,6 +34,7 @@ class Group(object):
         if hasattr(self, "_children"):
             self.undefine_children()
         self._strict = False
+        self._can_be_muted = None
         self._unconstrained_handler_priority = DONT_CARE
         self._children = {}
         self._parent_exception_policy = None
@@ -71,6 +72,16 @@ class Group(object):
                 child.validate_strict()
         self._strict = strict
 
+    def should_not_be_muted(self):
+        self._can_be_muted = False
+
+    def can_be_muted(self):
+        if self._can_be_muted is not None:
+            return self._can_be_muted
+        if self._parent is None:
+            return True
+        return self._parent.can_be_muted()
+
     def get_undefined_hooks(self):
         returned = [
             hook for hook in self.get_hooks() if not hook.is_defined()]
@@ -87,12 +98,6 @@ class Group(object):
 
     def remove_child(self, child):
         self._children.pop(child)
-
-    def get_or_create_subgroup(self, name):
-        returned = self._subgroups.get(name)
-        if returned is None:
-            returned = self._subgroups[name] = Group(name, parent=self)
-        return returned
 
     def get_subgroups(self):
         return list(self.iter_subgroups())
