@@ -12,7 +12,7 @@ from .exceptions import (CannotResolveDependencies, HookNotFound,
 from .registration import Registration
 from .utils import topological_sort_registrations
 
-from logbook.utils import log_deprecation_message
+from vintage import warn_deprecation
 
 _logger = logbook.Logger(__name__)
 
@@ -93,7 +93,7 @@ class Hook(object):
         """Registers a new handler to this hook
         """
         if self.deprecated:
-            log_deprecation_message('Hook {0} is deprecated!'.format(self.full_name), frame_correction=+1)
+            warn_deprecation('Hook {0} is deprecated!'.format(self.full_name), frame_correction=+1)
         returned = Registration(func, self, token=token, tags=tags, needs=needs, provides=provides, **kwargs)
         if self.group.is_strict():
             self.validate_strict([returned])
