@@ -1,4 +1,5 @@
 pytest
 munch
+pylint
 pytest-pylint
 
