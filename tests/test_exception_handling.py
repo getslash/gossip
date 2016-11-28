@@ -1,3 +1,4 @@
+# pylint: disable=unused-argument
 from munch import Munch
 
 import gossip
@@ -12,8 +13,9 @@ def test_exception_from_internal_hook(registered_hook):
     registered_hook.fail_when_called()
     called = Munch(count=0)
 
+    # pylint: disable=unused-variable
     @gossip.register("gossip.on_handler_exception")
-    def handle_exception(handler, exception, hook):  # pylint: disable=unused-variable, unused-argument
+    def handle_exception(handler, exception, hook):
         called.count += 1
         raise CustomException()
 
