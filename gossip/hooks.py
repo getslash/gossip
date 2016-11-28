@@ -12,7 +12,7 @@ from .exceptions import (CannotResolveDependencies, HookNotFound,
 from .registration import Registration
 from .utils import topological_sort_registrations
 
-from logbook.utils import log_deprecation_message
+from vintage import warn_deprecation
 
 _logger = logbook.Logger(__name__)
 
@@ -93,7 +93,7 @@ class Hook(object):
         """Registers a new handler to this hook
         """
         if self.deprecated:
-            log_deprecation_message('Hook {0} is deprecated!'.format(self.full_name), frame_correction=+1)
+            warn_deprecation('Hook {0} is deprecated!'.format(self.full_name), frame_correction=+1)
         returned = Registration(func, self, token=token, tags=tags, needs=needs, provides=provides, **kwargs)
         if self.group.is_strict():
             self.validate_strict([returned])
@@ -121,7 +121,8 @@ class Hook(object):
 
     def trigger(self, kwargs, tags=None):
         if self._unmet_deps:
-            raise CannotResolveDependencies('Hook {0!r} has unmet dependencies: {1}'.format(self, ', '.join(map(str, self._unmet_deps))))
+            deps_str = ', '.join([str(dep) for dep in self._unmet_deps])
+            raise CannotResolveDependencies('Hook {0!r} has unmet dependencies: {1}'.format(self, deps_str))
         if self.full_name in _muted_stack[-1]:
             _logger.debug("Hook {0!r} muted, skipping trigger", self)
             return
@@ -166,17 +167,15 @@ class Hook(object):
         for callback in self._pre_trigger_callbacks:
             callback(registration, kwargs)
         try:
-            registration(**kwargs)  # pylint: disable=star-args
+            registration(**kwargs)
         except NotNowException:
             raise
-        except:
+        except Exception:  # pylint: disable=broad-except
             exc_info = sys.exc_info()
             if self._trigger_internal_hooks:
                 trigger("gossip.on_handler_exception",
                         handler=registration.func, exception=exc_info, hook=self)
-            _logger.debug("Exception occurred while calling {0}",
-                         registration, exc_info=exc_info)
-            # TODO: debug here
+            _logger.debug("Exception occurred while calling {0}", registration, exc_info=exc_info)
         return exc_info
 
     def __repr__(self):

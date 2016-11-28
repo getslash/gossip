@@ -1,7 +1,6 @@
 import itertools
 import sys
 import types
-from contextlib import contextmanager
 
 from ._compat import string_types
 

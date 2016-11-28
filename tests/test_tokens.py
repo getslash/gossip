@@ -1,5 +1,3 @@
-import functools
-
 from munch import Munch
 
 import gossip
@@ -35,7 +33,7 @@ def test_token_registration_unregistration(registrations):
     assert not registrations.handler4.gossip.is_active()
 
 
-def test_group_only_token_unregistration(registrations):
+def test_group_only_token_unregistration(registrations):  # pylint: disable=unused-argument
 
     gossip.get_group("group2").unregister_token("token1")
     assert len(_get_all_registrations()) == 3

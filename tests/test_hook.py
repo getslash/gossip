@@ -9,7 +9,7 @@ def test_pre_trigger_callback(checkpoint):
     hook = define('somehook')
 
     @hook.add_pre_trigger_callback
-    def pre_trigger_callback(registration, kwargs):
+    def pre_trigger_callback(registration, kwargs):  # pylint: disable=unused-variable
         called_args.append((registration, kwargs))
 
     assert not called_args
@@ -19,7 +19,7 @@ def test_pre_trigger_callback(checkpoint):
     assert not called_args
 
     @register('somehook')
-    def callback(**kwargs):
+    def callback(**kwargs):  # pylint: disable=unused-argument
         checkpoint()
 
     assert not called_args
@@ -32,6 +32,7 @@ def test_pre_trigger_callback(checkpoint):
 
 
 def test_remove_pre_trigger_callback():
+    # pylint: disable=protected-access
     hook = define('hook')
 
     @hook.add_pre_trigger_callback

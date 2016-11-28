@@ -31,7 +31,7 @@ def test_needs_provides_cyclic_simple(timeline):
     with pytest.raises(CannotResolveDependencies):
         timeline.register(needs=['0'], provides=['1'])
     # make sure the cyclic registration was not added
-    assert len(gossip.get_hook(timeline.hook_name)._registrations) == 1
+    assert len(gossip.get_hook(timeline.hook_name)._registrations) == 1  # pylint: disable=protected-access
 
 
 def test_needs_provides_cyclic_complex(timeline):
@@ -42,7 +42,7 @@ def test_needs_provides_cyclic_complex(timeline):
     with pytest.raises(CannotResolveDependencies):
         timeline.register(needs=['0'], provides=['4'])
     # make sure the cyclic registration was not added
-    assert len(gossip.get_hook(timeline.hook_name)._registrations) == 4
+    assert len(gossip.get_hook(timeline.hook_name)._registrations) == 4  # pylint: disable=protected-access
 
 
 @pytest.mark.parametrize('priority', [gossip.FIRST, gossip.DONT_CARE, gossip.LAST])
@@ -72,6 +72,7 @@ def test_policy_gets_reset():
 
 
 def test_unmet_dependencies(timeline):
+    # pylint: disable=unused-variable
     evt = timeline.register(needs=['a'])
     with pytest.raises(CannotResolveDependencies):
         timeline.trigger()

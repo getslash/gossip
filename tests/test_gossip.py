@@ -1,12 +1,12 @@
 import gossip
 import gossip.groups
-from gossip import registry as gossip_registry
 import pytest
-from gossip.exceptions import NameAlreadyUsed, GroupNotFound, HookNotFound
+from gossip.exceptions import NameAlreadyUsed, GroupNotFound
 
+# pylint: disable=unused-variable
 
 def test_trigger_no_hook_registered():
-    result = gossip.trigger("unregistered")
+    result = gossip.trigger("unregistered")  # pylint: disable=assignment-from-no-return
     assert result is None
 
 
@@ -94,7 +94,7 @@ def test_global_group_reset_delets_all_group(registered_hooks):
     assert not gossip.get_global_group().get_subgroups()
 
 
-def test_global_group_is_same(registered_hooks):
+def test_global_group_is_same(registered_hooks):  # pylint: disable=unused-argument
     global_group = gossip.get_global_group()
     global_group.reset()
     assert gossip.get_global_group() is global_group

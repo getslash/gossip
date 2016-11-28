@@ -139,7 +139,7 @@ class Timeline(object):
     def register(self, **kwargs):
         evt = Event(next(self.event_index))
         @gossip.register(self.hook_name, **kwargs)
-        def callback():
+        def callback():  # pylint: disable=unused-variable
             evt.timestamp = next(self.timestamps)
         return evt
 
