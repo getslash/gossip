@@ -130,6 +130,9 @@ class Timeline(object):
         self.timestamps = itertools.count(1000)
         self.event_index = itertools.count()
 
+    def get_hook(self):
+        return gossip.get_hook(self.hook_name)
+
     def get_group(self):
         return gossip.get_group(self.hook_name.rsplit('.', 1)[0])
 

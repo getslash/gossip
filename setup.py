@@ -8,6 +8,7 @@ with open(os.path.join(os.path.dirname(__file__), "gossip", "__version__.py")) a
 _INSTALL_REQUIERS = [
     'logbook>=0.12.0',
     'vintage',
+    'sentinels',
 ]
 
 setup(name="gossip",
