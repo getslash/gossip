@@ -10,7 +10,7 @@ def test_undefined_hooks_have_no_side_effects():
     assert gossip.get_all_registrations() == []
     gossip.get_or_create_group('group').set_strict()
 
-    for _ in range(5):
+    for _ in range(5): # pylint: disable=redefined-builtin
         with pytest.raises(UndefinedHook):
             @gossip.register('group.hook')
             def handler():  # pylint: disable=unused-variable

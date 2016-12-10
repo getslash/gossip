@@ -13,7 +13,7 @@ _token_registrations = {}
 
 class Registration(object):
 
-    def __init__(self, func, hook, token=None, tags=None, needs=None, provides=None, reentrant=True, toggles_on=None, toggles_off=None):
+    def __init__(self, func, hook, token=None, tags=None, needs=None, provides=None, reentrant=True, toggles_on=None, toggles_off=None, priority=0):
         super(Registration, self).__init__()
 
         assert not (toggles_off is not None and toggles_on is not None), 'Cannot specify both toggles_on and toggles_off'
@@ -32,6 +32,12 @@ class Registration(object):
         self.valid = True
         self._toggles_on = toggles_on
         self._toggles_off = toggles_off
+        self._priority = priority
+
+    def get_priority(self):
+        return self._priority
+
+    priority = property(get_priority)
 
     def invalidate(self):
         self.valid = False

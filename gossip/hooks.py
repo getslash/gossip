@@ -94,17 +94,20 @@ class Hook(object):
         """
         if self.deprecated:
             warn_deprecation('Hook {0} is deprecated!'.format(self.full_name), frame_correction=+1)
-        returned = Registration(func, self, token=token, tags=tags, needs=needs, provides=provides, **kwargs)
+        new_registration = Registration(func, self, token=token, tags=tags, needs=needs, provides=provides, **kwargs)
         if self.group.is_strict():
-            self.validate_strict([returned])
-        self._registrations.append(returned)
-        if returned.needs or returned.provides:
+            self.validate_strict([new_registration])
+        need_sorting = self._registrations and new_registration.priority > self._registrations[-1].priority
+        self._registrations.append(new_registration)
+        if need_sorting:
+            self._registrations.sort(key=Registration.get_priority, reverse=True) # sort is stable, so order among registration isn't disturbed
+        if new_registration.needs or new_registration.provides:
             try:
                 self.recompute_call_order()
             except:
                 self._registrations.pop()
                 raise
-        return returned
+        return new_registration
 
     def recompute_call_order(self):
         self._registrations = topological_sort_registrations(self._registrations, unconstrained_priority=self.group.get_unconstrained_handler_priority())
@@ -254,7 +257,7 @@ def define(hook_name, **kwargs):
     return returned
 
 
-def register(func=None, hook_name=None, token=None, tags=None, needs=None, provides=None, reentrant=True, toggles_on=None, toggles_off=None):
+def register(func=None, hook_name=None, token=None, tags=None, needs=None, provides=None, reentrant=True, toggles_on=None, toggles_off=None, priority=0):
     """Registers a new function to a hook
 
     :param hook_name: full name of hook to register to
@@ -283,12 +286,16 @@ def register(func=None, hook_name=None, token=None, tags=None, needs=None, provi
             provides=provides,
             reentrant=reentrant,
             toggles_on=toggles_on,
-            toggles_off=toggles_off)
+            toggles_off=toggles_off,
+            priority=priority,
+        )
     assert hook_name is not None
     registration = get_or_create_hook(
         hook_name).register(
             func, token=token, tags=tags, needs=needs, provides=provides, reentrant=reentrant,
-            toggles_on=toggles_on, toggles_off=toggles_off)
+            toggles_on=toggles_on, toggles_off=toggles_off,
+            priority=priority,
+        )
     assert registration
     return func
 
