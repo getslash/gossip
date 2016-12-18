@@ -10,6 +10,24 @@ def test_needs_provides_simple(timeline):
     assert evt1.timestamp > evt2.timestamp
 
 
+def test_unmet_deps_after_unregister(hook, counter):
+    reg = hook.register(counter.plus_one, provides=['something'])
+    hook.register(counter.plus_one, needs=['something'])
+
+    reg.unregister()
+    with pytest.raises(CannotResolveDependencies):
+        hook.trigger({})
+    assert counter.get() == 0
+
+
+def test_unmet_deps_resolved_after_unregister_all(hook, counter):
+    hook.register(counter.plus_one, provides=['something'])
+    hook.register(counter.plus_one, needs=['something'])
+    hook.unregister_all()
+    hook.trigger({})
+    assert counter.get() == 0
+
+
 def test_needs_provides_complex(timeline):
     events = [
         timeline.register(provides=['0'], needs=['1']),

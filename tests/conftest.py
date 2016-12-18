@@ -204,6 +204,9 @@ class Counter(object):
     def get(self):
         return self._value
 
+    def plus_one(self):
+        self.add(1)
+
     value = property(get)
 
 @pytest.fixture

@@ -118,9 +118,11 @@ class Hook(object):
         assert registration.hook is self
         self._registrations.remove(registration)
         registration.hook = None
+        self.recompute_call_order()
 
     def unregister_all(self):
         del self._registrations[:]
+        self.recompute_call_order()
 
     def trigger(self, kwargs, tags=None):
         if self._unmet_deps:
