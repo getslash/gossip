@@ -3,6 +3,7 @@ import logbook
 import sys
 from contextlib import contextmanager
 from types import GeneratorType
+from sentinels import Sentinel
 
 from . import groups, registry
 from ._compat import itervalues, string_types
@@ -15,6 +16,8 @@ from .utils import topological_sort_registrations
 from vintage import warn_deprecation
 
 _logger = logbook.Logger(__name__)
+
+_REGISTER_NO_OP = Sentinel('REGISTER_NO_OP')
 
 
 class Hook(object):
@@ -30,6 +33,7 @@ class Hook(object):
             self.full_name = "{0}.{1}".format(self.group.full_name, self.name)
         registry.hooks[self.full_name] = self
         self._registrations = []
+        self._empty_regisrations = []
         self._arg_names = arg_names
         self._trigger_internal_hooks = self.full_name != "gossip.on_handler_exception"
         self._defined = False
@@ -37,6 +41,11 @@ class Hook(object):
         self._unmet_deps = frozenset()
         self.doc = doc
         self.deprecated = deprecated
+
+    def _get_registration_list_from_func(self, func):
+        if func is _REGISTER_NO_OP:
+            return self._empty_regisrations
+        return self._registrations
 
     def add_pre_trigger_callback(self, callback):
         self._pre_trigger_callbacks.append(callback)
@@ -85,7 +94,7 @@ class Hook(object):
             raise UndefinedHook(
                 "hook {0} wasn't defined yet".format(self.full_name))
         if registrations_to_validate is None:
-            registrations_to_validate = self._registrations
+            registrations_to_validate = self._registrations + self._empty_regisrations
         for registration in registrations_to_validate:
             self.validate_tags(registration.tags, is_strict=True)
 
@@ -98,7 +107,7 @@ class Hook(object):
         if self.group.is_strict():
             self.validate_strict([new_registration])
         need_sorting = self._registrations and new_registration.priority > self._registrations[-1].priority
-        self._registrations.append(new_registration)
+        self._get_registration_list_from_func(func).append(new_registration)
         if need_sorting:
             self._registrations.sort(key=Registration.get_priority, reverse=True) # sort is stable, so order among registration isn't disturbed
         if new_registration.needs or new_registration.provides:
@@ -109,18 +118,27 @@ class Hook(object):
                 raise
         return new_registration
 
+    def register_no_op(self, **kwargs):
+        if kwargs.get('needs'):
+            raise NotImplementedError("Cannot define 'needs' for register_no_op")
+        return self.register(func=_REGISTER_NO_OP, **kwargs)
+
     def recompute_call_order(self):
         self._registrations = topological_sort_registrations(self._registrations, unconstrained_priority=self.group.get_unconstrained_handler_priority())
-        self._unmet_deps = frozenset(n for r in self._registrations for n in r.needs) - frozenset(p for r in self._registrations for p in r.provides)
+        self._unmet_deps = frozenset(n for r in self._registrations for n in r.needs) - \
+                           frozenset(p for r in (self._registrations + self._empty_regisrations) for p in r.provides)
 
 
     def unregister(self, registration):
         assert registration.hook is self
-        self._registrations.remove(registration)
+        self._get_registration_list_from_func(registration.func).remove(registration)
         registration.hook = None
+        self.recompute_call_order()
 
     def unregister_all(self):
         del self._registrations[:]
+        del self._empty_regisrations[:]
+        self.recompute_call_order()
 
     def trigger(self, kwargs, tags=None):
         if self._unmet_deps:
