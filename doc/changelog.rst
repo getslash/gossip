@@ -1,6 +1,7 @@
 Changelog
 =========
 
+* :release:`2.1.0 <01-01-2017>`
 * :feature:`24` Add optional type checking to hook arguments
 * :feature:`21` Support registration priorities for controlling calling order
 * :feature:`-` Use vintage for hook deprecations
