@@ -1,6 +1,7 @@
 import functools
 import logbook
 import sys
+from collections import OrderedDict
 from contextlib import contextmanager
 from types import GeneratorType
 from sentinels import Sentinel
@@ -22,7 +23,7 @@ _REGISTER_NO_OP = Sentinel('REGISTER_NO_OP')
 
 class Hook(object):
 
-    def __init__(self, group, name, arg_names=(), doc=None, deprecated=False):
+    def __init__(self, group, name, arg_names=None, doc=None, deprecated=False):
         super(Hook, self).__init__()
         self.group = group
         self.name = name
@@ -34,7 +35,7 @@ class Hook(object):
         registry.hooks[self.full_name] = self
         self._registrations = []
         self._empty_regisrations = []
-        self._arg_names = arg_names
+        self._arguments = self._normalize_arguments(arg_names)
         self._trigger_internal_hooks = self.full_name != "gossip.on_handler_exception"
         self._defined = False
         self._pre_trigger_callbacks = []
@@ -46,6 +47,15 @@ class Hook(object):
         if func is _REGISTER_NO_OP:
             return self._empty_regisrations
         return self._registrations
+
+    def _normalize_arguments(self, arg_names):
+        if arg_names is None:
+            return None
+
+        if isinstance(arg_names, dict):
+            return OrderedDict(arg_names)
+
+        return OrderedDict((arg_name, None) for arg_name in arg_names)
 
     def add_pre_trigger_callback(self, callback):
         self._pre_trigger_callbacks.append(callback)
@@ -73,7 +83,7 @@ class Hook(object):
         return self._defined
 
     def get_argument_names(self):
-        return self._arg_names
+        return tuple(self._arguments)
 
     def __call__(self, **kwargs):
         return self.trigger(kwargs)
@@ -88,6 +98,22 @@ class Hook(object):
         if extra_tags:
             raise UnsupportedHookTags("hook {0} support {1} tags, not: {2}".format(
                 self.full_name, self.tags, extra_tags))
+
+    def validate_kwargs(self, kwargs):
+        if self._arguments is None or not self.group.is_strict():
+            return
+
+        unknown = set(kwargs) - set(self._arguments)
+        if unknown:
+            raise TypeError('Unknown arguments specified: {}'.format(', '.join(unknown)))
+
+        for arg_name, arg_types in self._arguments.items():
+            if arg_name not in kwargs:
+                raise TypeError('Missing argument {!r}'.format(arg_name))
+            if arg_types is not None and not isinstance(kwargs[arg_name], arg_types):
+                raise TypeError('Incorrect type for argument {}. Expected {!r}, got {!r}'.format(
+                    arg_name, arg_types, type(kwargs[arg_name])))
+
 
     def validate_strict(self, registrations_to_validate=None):
         if not self._defined:
@@ -149,6 +175,7 @@ class Hook(object):
             return
 
         self.validate_tags(tags)
+        self.validate_kwargs(kwargs)
         exception_policy = self.group.get_exception_policy()
 
         registrations = self._registrations
@@ -200,7 +227,7 @@ class Hook(object):
         return exc_info
 
     def __repr__(self):
-        return "<Hook {0}({1})>".format(self.name, ", ".join(self._arg_names))
+        return "<Hook {0}({1})>".format(self.name, ", ".join(self._arguments or ()))
 
 
 def trigger(hook_name, **kwargs):
