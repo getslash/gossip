@@ -137,6 +137,30 @@ Strict hooks always perform checks on the tags that are passed to them:
        Traceback (most recent call last):
            ...
        UnsupportedHookTags: ...
+
+
+Strictness and Hook Arguments
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Strict hooks validate their keyword arguments according to the ``arg_names`` parameter passed to ``define``:
+
+       >>> gossip.create_group('strict_group_2').set_strict()
+       >>> _ = gossip.define('strict_group_2.hook1', arg_names=('a', 'b'))
+       >>> gossip.trigger('strict_group_2.hook1') # doctest: +IGNORE_EXCEPTION_DETAIL
+       Traceback (most recent call last):
+          ...
+       TypeError: Missing argument ...
+
+Hook arguments can also have their types specified for a stricter validation:
+
+       >>> _ = gossip.define('strict_group_2.hook2', arg_names={'a': int, 'b': (str, float)})
+       >>> gossip.trigger('strict_group_2.hook2', a=2, b=object()) # doctest: +IGNORE_EXCEPTION_DETAIL
+       Traceback (most recent call last):
+       ...
+       TypeError: Incorrect type for argument b. Expected (<class 'str'>, <class 'float'>), got <class 'object'>
+
+
+
        		
 
 Token Registration

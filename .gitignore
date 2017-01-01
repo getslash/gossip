@@ -4,6 +4,7 @@
 build
 .tox
 flycheck-*
+flycheck_*
 dist
 .env
 .DS_Store

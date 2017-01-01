@@ -1,6 +1,17 @@
 Changelog
 =========
 
+* :release:`2.1.0 <01-01-2017>`
+* :feature:`24` Add optional type checking to hook arguments
+* :feature:`21` Support registration priorities for controlling calling order
+* :feature:`-` Use vintage for hook deprecations
+* :release:`2.0.0 <18-05-2016>`
+* :feature:`17` Support toggle registrations
+* :feature:`16` Support non-reentrant hooks
+* :feature:`-` Completely move to Logbook for logging
+* :release:`1.1.0 <10-01-2016>`
+* :feature:`-` Support deprecated hooks
+* :release:`1.0.0 <29-07-2015>`
 * :feature:`11` Add needs/provides mechanism for fine grained control of dependencies
 * :feature:`10` Add support for pre-trigger callbacks
 * :feature:`9` Add support for registration blueprints

@@ -2,7 +2,7 @@ from munch import Munch
 
 import gossip
 from gossip.exceptions import UndefinedHook
-from .utils import TestSteps, _noop
+from .utils import UnitestSteps, _noop
 import pytest
 
 
@@ -10,15 +10,15 @@ def test_undefined_hooks_have_no_side_effects():
     assert gossip.get_all_registrations() == []
     gossip.get_or_create_group('group').set_strict()
 
-    for retry in range(5):
+    for _ in range(5): # pylint: disable=redefined-builtin
         with pytest.raises(UndefinedHook):
             @gossip.register('group.hook')
-            def handler():
+            def handler():  # pylint: disable=unused-variable
                 pass
     assert gossip.get_all_registrations() == []
 
 
-steps = TestSteps()
+steps = UnitestSteps()
 
 @steps.add
 def _make_group_strict(ctx):
@@ -39,7 +39,7 @@ def _register_undefined_hook(ctx):
         raises_context = _noop()
     with raises_context:
         @gossip.register('group.undefined_hook')
-        def handler():
+        def handler():  # pylint: disable=unused-variable
             pass
     ctx.registered_undefined_hook = True
 
@@ -51,7 +51,7 @@ def _register_defined_hook(ctx):
         raises_context = _noop()
     with raises_context:
         @gossip.register('group.defined_hook')
-        def handler():
+        def handler():  # pylint: disable=unused-variable
             pass
     ctx.registered_defined_hook = True
 

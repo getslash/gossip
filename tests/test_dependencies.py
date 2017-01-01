@@ -4,6 +4,8 @@ import pytest
 
 from .conftest import RegisteredHook
 
+# pylint: disable=redefined-outer-name
+
 
 def test_not_now():
     with pytest.raises(gossip.NotNowException):
@@ -44,7 +46,7 @@ def test_circular_dependency(handlers):
         assert handler.called == (index not in (3, 7))
 
 
-def test_reordering(handlers):
+def test_reordering(handlers):  # pylint: disable=redefined-outer-name, unused-argument
     pytest.skip("n/i")
 
 
@@ -54,4 +56,4 @@ def _trigger(handlers):
 
 @pytest.fixture
 def handlers(hook_name):
-    return [RegisteredHook(hook_name) for i in range(10)]
+    return [RegisteredHook(hook_name) for _ in range(10)]

@@ -1,3 +1,4 @@
+# pylint: disable=unused-argument
 from munch import Munch
 
 import gossip
@@ -12,6 +13,7 @@ def test_exception_from_internal_hook(registered_hook):
     registered_hook.fail_when_called()
     called = Munch(count=0)
 
+    # pylint: disable=unused-variable
     @gossip.register("gossip.on_handler_exception")
     def handle_exception(handler, exception, hook):
         called.count += 1
@@ -32,7 +34,7 @@ def test_gossip_exception_caught_hook(registered_hook):
     error = Munch(caught=False)
 
     @gossip.register("gossip.on_handler_exception")
-    def handle_exception(handler, exception, hook):
+    def handle_exception(handler, exception, hook):  # pylint: disable=unused-variable, unused-argument
         assert handler is registered_hook.func
         assert exception[0] is registered_hook.exception_class
         assert isinstance(exception[1], registered_hook.exception_class)

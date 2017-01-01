@@ -9,6 +9,7 @@
 #pylint: disable=unused-argument
 #pylint: disable=unused-import
 #pylint: disable=exec-used
+ # pylint: disable=redefined-builtin
 import sys
 
 PY2 = sys.version_info[0] == 2

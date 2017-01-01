@@ -130,6 +130,9 @@ class Timeline(object):
         self.timestamps = itertools.count(1000)
         self.event_index = itertools.count()
 
+    def get_hook(self):
+        return gossip.get_hook(self.hook_name)
+
     def get_group(self):
         return gossip.get_group(self.hook_name.rsplit('.', 1)[0])
 
@@ -139,7 +142,7 @@ class Timeline(object):
     def register(self, **kwargs):
         evt = Event(next(self.event_index))
         @gossip.register(self.hook_name, **kwargs)
-        def callback():
+        def callback():  # pylint: disable=unused-variable
             evt.timestamp = next(self.timestamps)
         return evt
 
@@ -203,6 +206,9 @@ class Counter(object):
 
     def get(self):
         return self._value
+
+    def plus_one(self):
+        self.add(1)
 
     value = property(get)
 

@@ -98,6 +98,31 @@ not_now
 		...     if not some_condition():
 		...         gossip.not_now()
 
+Using Numerical Priorities
+--------------------------
+
+Gossip supports specifying *priorities* for registrations. Priorities are numbers (0 by default) by which the call order is determined -- the higher the number, the earlier the registration will be called:
+
+.. code-block:: python
+       
+       >>> @gossip.register('prioritized', priority=1)
+       ... def handler1():
+       ...    print('priority 1')
+       >>> @gossip.register('prioritized', priority=100)
+       ... def handler2():
+       ...    print('priority 100')
+       >>> @gossip.register('prioritized', priority=-5)
+       ... def handler3():
+       ...    print('priority -5')
+       >>> gossip.trigger('prioritized')
+       priority 100
+       priority 1
+       priority -5
+
+.. note:: Numerical priorities might not behave as expected when mixed with other ordering features, such as needs/provides or signaling
+
+
+
 Using Needs/Provides Markers
 ----------------------------
 

@@ -4,7 +4,7 @@ from .groups import (create_group, get_global_group, get_group, get_groups,
                      get_or_create_group, unregister_token)
 from .hooks import (define, get_all_hooks, get_all_registrations, get_hook, Hook, register, trigger,
                     trigger_with_tags, mute_context
-                    )
+                   )
 from .blueprint import Blueprint
 from .helpers import FIRST, DONT_CARE, LAST, Toggle
 
