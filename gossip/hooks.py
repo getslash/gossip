@@ -83,7 +83,7 @@ class Hook(object):
         return self._defined
 
     def get_argument_names(self):
-        return tuple(self._arguments)
+        return tuple(self._arguments or ())
 
     def __call__(self, **kwargs):
         return self.trigger(kwargs)
