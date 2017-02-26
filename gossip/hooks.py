@@ -73,8 +73,11 @@ class Hook(object):
             self.tags, tags)
         self.tags = tags
 
-    def get_registrations(self):
-        return list(self._registrations)
+    def get_registrations(self, include_empty=False):
+        returned = list(self._registrations)
+        if include_empty:
+            returned += list(self._empty_regisrations)
+        return returned
 
     def mark_defined(self):
         self._defined = True

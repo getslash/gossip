@@ -99,11 +99,13 @@ class Group(object):
     def get_hooks(self):
         return list(self.iter_hooks())
 
-    def iter_hooks(self):
+    def iter_hooks(self, recursive=False):
         for child in itervalues(self._children):
-            if isinstance(child, Group):
-                continue
-            yield child
+            if not isinstance(child, Group):
+                yield child
+            elif recursive:
+                for group_child in child.iter_hooks(recursive=recursive):
+                    yield group_child
 
     def remove_all_children(self):
         self._children.clear()
@@ -112,13 +114,11 @@ class Group(object):
         """Unregisters all handlers that were registered with ``token`` in this group
         """
         # todo: optimize this
-        for hook in self.iter_hooks():
-            for registration in hook.get_registrations():
+        for hook in self.iter_hooks(recursive=True):
+            for registration in hook.get_registrations(include_empty=True):
                 if registration.token == token:
                     registration.invalidate()
                     registration.unregister()
-        for group in self.iter_subgroups():
-            group.unregister_token(token)
 
     def set_exception_policy(self, policy):
         """ Determines how exceptions are handled by hooks in this group
