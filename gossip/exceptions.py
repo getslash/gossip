@@ -14,7 +14,9 @@ class NotNowException(Exception):
     pass
 
 class CannotResolveDependencies(Exception):
-    pass
+    def __init__(self, *args, **kwargs):
+        self.unmet_dependencies = kwargs.pop('unmet_deps', None)
+        super(CannotResolveDependencies, self).__init__(*args, **kwargs)
 
 class UndefinedHook(Exception):
     pass

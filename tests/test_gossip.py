@@ -51,10 +51,29 @@ def test_undefine(hook_name):
     def handler():
         pass
 
-    gossip.get_hook(hook_name).undefine()
+    hook = gossip.get_hook(hook_name)
+    hook.register_no_op()
+
+    hook.undefine()
     gossip.define(hook_name)
 
     assert not gossip.get_hook(hook_name).get_registrations()
+    assert not gossip.get_hook(hook_name).get_registrations(include_empty=True)
+
+
+@pytest.mark.parametrize('include_empty', [True, False])
+def test_get_registrations_include_empty(hook_name, include_empty):
+    gossip.define(hook_name)
+
+    @gossip.register(hook_name)
+    def handler():
+        pass
+
+    hook = gossip.get_hook(hook_name)
+    hook.register_no_op()
+
+    expected = 2 if include_empty else 1
+    assert len(hook.get_registrations(include_empty=include_empty)) == expected
 
 
 def test_get_hook(hook_name):

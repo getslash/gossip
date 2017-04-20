@@ -73,8 +73,11 @@ class Hook(object):
             self.tags, tags)
         self.tags = tags
 
-    def get_registrations(self):
-        return list(self._registrations)
+    def get_registrations(self, include_empty=False):
+        returned = list(self._registrations)
+        if include_empty:
+            returned += list(self._empty_regisrations)
+        return returned
 
     def mark_defined(self):
         self._defined = True
@@ -169,7 +172,8 @@ class Hook(object):
     def trigger(self, kwargs, tags=None):
         if self._unmet_deps:
             deps_str = ', '.join([str(dep) for dep in self._unmet_deps])
-            raise CannotResolveDependencies('Hook {0!r} has unmet dependencies: {1}'.format(self, deps_str))
+            raise CannotResolveDependencies('Hook {0!r} has unmet dependencies: {1}'.format(self, deps_str),
+                                            unmet_deps=self._unmet_deps)
         if self.full_name in _muted_stack[-1]:
             _logger.debug("Hook {0!r} muted, skipping trigger", self)
             return
