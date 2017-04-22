@@ -16,8 +16,9 @@ def test_unmet_deps_after_unregister(hook, counter):
     hook.register(counter.plus_one, needs=['something'])
 
     reg.unregister()
-    with pytest.raises(CannotResolveDependencies):
+    with pytest.raises(CannotResolveDependencies) as caught:
         hook.trigger({})
+    assert caught.value.unmet_dependencies == set(['something'])
     assert counter.get() == 0
 
 
@@ -84,8 +85,9 @@ def test_register_no_op_solves_dependencies(timeline):
     timeline.register(needs=['2'], provides=['1'])
     assert len(gossip.get_hook(timeline.hook_name)._registrations) == 2  # pylint: disable=protected-access
 
-    with pytest.raises(CannotResolveDependencies):
+    with pytest.raises(CannotResolveDependencies) as caught:
         timeline.trigger()
+    assert caught.value.unmet_dependencies == set(['2'])
 
     timeline.get_hook().register_no_op(provides=['2'])
     # Make sure "register_no_op" is not registred as "regular" callback
@@ -104,8 +106,9 @@ def test_unregister_no_op_remove_dependencies(timeline):
     timeline.trigger()
 
     registration.unregister()
-    with pytest.raises(CannotResolveDependencies):
+    with pytest.raises(CannotResolveDependencies) as caught:
         gossip.trigger(hook.full_name)
+    assert caught.value.unmet_dependencies == set(['2'])
 
 
 @pytest.mark.parametrize('priority', [gossip.FIRST, gossip.DONT_CARE, gossip.LAST])
@@ -137,8 +140,9 @@ def test_policy_gets_reset():
 def test_unmet_dependencies(timeline):
     # pylint: disable=unused-variable
     evt = timeline.register(needs=['a'])
-    with pytest.raises(CannotResolveDependencies):
+    with pytest.raises(CannotResolveDependencies) as caught:
         timeline.trigger()
+    assert caught.value.unmet_dependencies == set(['a'])
 
     evt2 = timeline.register(provides=['a'])
     timeline.trigger() # ok
