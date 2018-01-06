@@ -373,6 +373,22 @@ def unregister_all(hook_name):
     hook.unregister_all()
 
 
+@contextmanager
+def registered(hook_name, func, **kwargs):
+    """Registers a new function to a hook on enter and unregister it on exit.
+
+    :param hook_name: full name of hook to register to
+    :param func: function to call when the hook is triggered
+    :param kwargs: additional parameters which Hook.register can receives
+    """
+    hook = get_or_create_hook(hook_name)
+    reg = hook.register(func, **kwargs)
+    try:
+        yield reg
+    finally:
+        reg.unregister()
+
+
 def get_all_hooks():
     return list(itervalues(registry.hooks))
 
