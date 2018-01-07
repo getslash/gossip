@@ -1,6 +1,7 @@
 Changelog
 =========
 * :feature:`17` Add ``registered`` context
+* :feature:`-` Support mechanism for forbid hooks muting
 * :bug:`25` ``unregister_token`` iter all hooks (recursively) including empty registrations
 * :release:`2.1.0 <01-01-2017>`
 * :feature:`24` Add optional type checking to hook arguments
