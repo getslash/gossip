@@ -1,7 +1,7 @@
 import gossip
 import gossip.groups
 import pytest
-from gossip.exceptions import NameAlreadyUsed, GroupNotFound
+from gossip.exceptions import NameAlreadyUsed, GroupNotFound, CannotMuteHooks
 
 # pylint: disable=unused-variable
 
@@ -199,3 +199,59 @@ def test_mute_accepts_only_lists(arg):
     with pytest.raises(TypeError):
         with gossip.mute_context(arg):
             pass
+
+
+def test_mute_group(checkpoint):
+
+    @gossip.register('a.b.c')
+    def handler():
+        checkpoint()
+
+    gossip.get_group("a").forbid_muting()
+
+    with pytest.raises(CannotMuteHooks):
+        with gossip.mute_context(['a.b.c']):
+            gossip.trigger('a.b.c')
+    assert not checkpoint.called
+
+
+def test_mute_hook(checkpoint):
+
+    @gossip.register('a.b.c')
+    def handler():
+        checkpoint()
+
+    hook = gossip.define('a.b.d')
+    hook.forbid_muting()
+    assert not hook.can_be_muted()
+
+    with gossip.mute_context(['a.b.c']):
+        gossip.trigger('a.b.c')
+    assert not checkpoint.called
+
+
+def mute_other_sub_group():
+    hook_1 = gossip.define("a.b.c")
+    hook_2 = gossip.define("a.c.d")
+    hook_3 = gossip.define("a.c.e")
+
+    gossip.get_group("a.b").forbid_muting()
+    hook_3.forbid_muting()
+
+    assert not hook_1.can_be_muted()
+    assert not hook_3.can_be_muted()
+    assert hook_2.can_be_muted()
+
+
+@pytest.mark.parametrize('params', [])
+def test_forbid_muting(params):
+    name_for_mute, forbid_name, is_group, is_allowed = params
+    getter = gossip.get_group if is_group else gossip.get_hook
+    forbidden_obj = getter(forbid_name)
+    forbidden_obj.forbid_muting()
+
+    hook = gossip.get_hook(name_for_mute)
+    assert hook.can_be_muted() == is_allowed
+
+    forbidden_obj.allow_muting()
+    assert hook.can_be_muted() == is_allowed

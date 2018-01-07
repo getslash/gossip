@@ -34,6 +34,7 @@ class Group(object):
         if hasattr(self, "_children"):
             self.undefine_children()
         self._strict = False
+        self._can_be_muted = None
         self._unconstrained_handler_priority = DONT_CARE
         self._children = {}
         self._parent_exception_policy = None
@@ -70,6 +71,19 @@ class Group(object):
             elif strict:
                 child.validate_strict()
         self._strict = strict
+
+    def allow_muting(self):
+        self._can_be_muted = True
+
+    def forbid_muting(self):
+        self._can_be_muted = False
+
+    def can_be_muted(self):
+        if self._can_be_muted is not None:
+            return self._can_be_muted
+        if self._parent is None:
+            return True
+        return self._parent.can_be_muted()
 
     def get_undefined_hooks(self):
         returned = [

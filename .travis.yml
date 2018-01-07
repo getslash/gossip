@@ -2,16 +2,15 @@ language: python
 sudo: false
 python:
 - '2.7'
-- '3.3'
-- '3.4'
 - '3.5'
+- '3.6'
 - pypy
 install:
 - pip install -U pip
 - pip install -e .
 - pip install -U -r test_requirements.txt
 script:
-- py.test
+- pytest
 deploy:
   provider: pypi
   user: vmalloc
