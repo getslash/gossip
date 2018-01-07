@@ -18,6 +18,9 @@ class CannotResolveDependencies(Exception):
         self.unmet_dependencies = kwargs.pop('unmet_deps', None)
         super(CannotResolveDependencies, self).__init__(*args, **kwargs)
 
+class CannotMuteHooks(Exception):
+    pass
+
 class UndefinedHook(Exception):
     pass
 

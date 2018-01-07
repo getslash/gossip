@@ -8,7 +8,7 @@ All hooks in gossip must be identified by a **name**, which uniquely identifies 
 Registering Handlers
 --------------------
 
-To register a handler for a hook, just user :py:func:`gossip.register`:
+To register a handler for a hook, just use :py:func:`gossip.register`:
 
 .. code-block:: python
 
@@ -18,6 +18,17 @@ To register a handler for a hook, just user :py:func:`gossip.register`:
 		>>> @gossip.register('hook_name')
 		... def func():
 		...     print('Called')
+
+:py:func:`gossip.registered` context can be used to specify a temporarily registered handler around a specific code block
+
+.. code-block:: python
+
+		>>> def func2():
+		...     print('Func2')
+
+		>>> with gossip.registered('hook_name', func2) as reg:
+		...     assert reg.is_active()
+		>>> assert not reg.is_active()
 
 Triggering Hooks
 ----------------

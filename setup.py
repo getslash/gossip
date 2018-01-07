@@ -14,9 +14,8 @@ _INSTALL_REQUIERS = [
 setup(name="gossip",
       classifiers=[
           "Programming Language :: Python :: 2.7",
-          "Programming Language :: Python :: 3.3",
-          "Programming Language :: Python :: 3.4",
           "Programming Language :: Python :: 3.5",
+          "Programming Language :: Python :: 3.6",
       ],
       description="Signaling and hooking library",
       license="BSD3",
@@ -25,7 +24,7 @@ setup(name="gossip",
       version=__version__,  # pylint: disable=E0602
       packages=find_packages(exclude=["tests"]),
 
-      url="https://github.com/vmalloc/gossip",
+      url="https://github.com/getslash/gossip",
 
       install_requires=_INSTALL_REQUIERS,
       scripts=[],
