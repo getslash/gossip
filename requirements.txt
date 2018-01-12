@@ -1,0 +1,3 @@
+logbook>=0.12.0
+sentinels
+vintage

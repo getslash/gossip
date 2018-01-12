@@ -1,5 +1,6 @@
 Changelog
 =========
+* :feature:`30` Switch to PBR
 * :release:`2.3.0 <07-01-2018>`
 * :feature:`17` Add ``registered`` context
 * :feature:`-` Support mechanism for forbid hooks muting
