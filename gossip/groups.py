@@ -127,7 +127,6 @@ class Group(object):
     def unregister_token(self, token):
         """Unregisters all handlers that were registered with ``token`` in this group
         """
-        # todo: optimize this
         for hook in self.iter_hooks(recursive=True):
             for registration in hook.get_registrations(include_empty=True):
                 if registration.token == token:
