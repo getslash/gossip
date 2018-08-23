@@ -1,5 +1,6 @@
 Changelog
 =========
+* :bug:`36` Ensure ``define_hook`` handles hook kwargs even if it already being defined
 * :feature:`30` Switch to PBR
 * :release:`2.3.0 <07-01-2018>`
 * :feature:`17` Add ``registered`` context
