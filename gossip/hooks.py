@@ -10,7 +10,7 @@ from . import groups, registry
 from ._compat import itervalues, string_types
 from .exceptions import (CannotResolveDependencies, HookNotFound,
                          NameAlreadyUsed, NotNowException, UndefinedHook,
-                         CannotMuteHooks,
+                         CannotMuteHooks, UnsupportedHookParams,
                          UnsupportedHookTags)
 from .registration import Registration
 from .utils import topological_sort_registrations
@@ -36,14 +36,37 @@ class Hook(object):
         registry.hooks[self.full_name] = self
         self._registrations = []
         self._empty_regisrations = []
-        self._arguments = self._normalize_arguments(arg_names)
+        self._arguments = None
         self._trigger_internal_hooks = self.full_name != "gossip.on_handler_exception"
         self._defined = False
         self._pre_trigger_callbacks = []
         self._unmet_deps = frozenset()
-        self._can_be_muted = can_be_muted
-        self.doc = doc
-        self.deprecated = deprecated
+        self._can_be_muted = None
+        self.doc = None
+        self.deprecated = None
+        self.configure(arg_names=arg_names, doc=doc, deprecated=deprecated, can_be_muted=can_be_muted)
+
+    def configure(self, **kwargs):
+        normalized_args = self._normalize_arguments(kwargs.pop('arg_names', None))
+        if (normalized_args is not None) and (normalized_args != self._arguments):
+            assert self._arguments is None, "Cannot override exists arg_names {} with {}".format(
+                list(self._arguments), list(normalized_args))
+            self._arguments = normalized_args
+
+        doc = kwargs.pop('doc', None)
+        if doc is not None:
+            self.doc = doc
+
+        is_deprecated = kwargs.pop('deprecated', None)
+        if is_deprecated is not None:
+            self.deprecated = is_deprecated
+
+        can_be_muted = kwargs.pop('can_be_muted', None)
+        if can_be_muted is not None:
+            self._can_be_muted = can_be_muted
+
+        if kwargs:
+            raise UnsupportedHookParams("Unsupported hook params: {}".format(', '.join(kwargs)))
 
     def _get_registration_list_from_func(self, func):
         if func is _REGISTER_NO_OP:
@@ -82,8 +105,7 @@ class Hook(object):
         registry.hooks.pop(self.full_name)
 
     def set_tags(self, tags):
-        assert not self.tags, "Cannot override exists tags {0} with {1}".format(
-            self.tags, tags)
+        assert not self.tags, "Cannot override exists tags {} with {}".format(self.tags, tags)
         self.tags = tags
 
     def get_registrations(self, include_empty=False):
@@ -310,9 +332,11 @@ def define(hook_name, **kwargs):
     :returns: The :class:`gossip.hook.Hook` object created
     """
     tags = kwargs.pop('tags', None)
-    returned = get_or_create_hook(hook_name, **kwargs)
+    returned = get_or_create_hook(hook_name)
     if returned.is_defined():
         raise NameAlreadyUsed("Hook {0} is already defined".format(hook_name))
+    if kwargs:
+        returned.configure(**kwargs)
     if tags:
         returned.set_tags(tags)
     returned.mark_defined()

@@ -7,10 +7,10 @@ python:
 - pypy
 install:
 - pip install -U pip
-- pip install -e .
-- pip install -U -r test_requirements.txt
+- pip install -e .[testing]
 script:
 - pytest
+- pylint --rcfile=.pylintrc gossip tests
 deploy:
   provider: pypi
   user: vmalloc

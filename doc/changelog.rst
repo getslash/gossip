@@ -1,7 +1,12 @@
 Changelog
 =========
+
+* :release:`2.3.1 <28-08-2018>`
+* :bug:`36` Ensure ``define_hook`` handles hook kwargs even if it already being defined
+* :bug:`30` Switch to PBR
 * :release:`2.3.0 <07-01-2018>`
 * :feature:`17` Add ``registered`` context
+* :release:`2.2.0 <22-04-2017>`
 * :feature:`-` Support mechanism for forbid hooks muting
 * :bug:`25` ``unregister_token`` iter all hooks (recursively) including empty registrations
 * :release:`2.1.0 <01-01-2017>`

@@ -1,4 +1,0 @@
-pytest
-munch
-pytest-pylint
-

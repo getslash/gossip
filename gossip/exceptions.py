@@ -26,3 +26,6 @@ class UndefinedHook(Exception):
 
 class UnsupportedHookTags(Exception):
     pass
+
+class UnsupportedHookParams(Exception):
+    pass
