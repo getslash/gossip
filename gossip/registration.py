@@ -13,10 +13,12 @@ _token_registrations = {}
 
 class Registration(object):
 
-    def __init__(self, func, hook, token=None, tags=None, needs=None, provides=None, reentrant=True, toggles_on=None, toggles_off=None, priority=0):
+    def __init__(self, func, hook, token=None, tags=None, needs=None, provides=None, reentrant=True, toggles_on=None,
+                 toggles_off=None, priority=0, guard=None):
         super(Registration, self).__init__()
 
         assert not (toggles_off is not None and toggles_on is not None), 'Cannot specify both toggles_on and toggles_off'
+        assert (guard is None) or callable(guard), "Registration 'guard' argument must be callable if specified"
         self.id = next(_registration_id)
         self.hook = hook
         self.func = func
@@ -33,6 +35,7 @@ class Registration(object):
         self._toggles_on = toggles_on
         self._toggles_off = toggles_off
         self._priority = priority
+        self._guard = guard
 
     def get_priority(self):
         return self._priority
@@ -55,7 +58,11 @@ class Registration(object):
             assert self.hook is None
 
     def is_active(self):
-        return self.hook is not None
+        if (self.hook is None) or (not self.valid):
+            return False
+        if self._guard is None:
+            return True
+        return self._guard()
 
     def is_being_called(self):
         return self._is_being_called
@@ -91,7 +98,7 @@ class Registration(object):
         return True
 
     def __repr__(self):
-        return repr(self.func)
+        return "<{}: {}>".format(self.__class__.__name__, self.func)
 
 
 def _normalize_deps(deps):

@@ -224,7 +224,8 @@ class Hook(object):
             while True:
                 any_resolved = False
                 for registration in list(registrations):
-                    if not registration.valid:
+                    if not registration.is_active():
+                        _logger.trace("Skipping {} because it is inactive", registration)
                         continue
                     if not registration.has_tags(tags):
                         continue
@@ -343,7 +344,8 @@ def define(hook_name, **kwargs):
     return returned
 
 
-def register(func=None, hook_name=None, token=None, tags=None, needs=None, provides=None, reentrant=True, toggles_on=None, toggles_off=None, priority=0):
+def register(func=None, hook_name=None, token=None, tags=None, needs=None, provides=None, reentrant=True,
+             toggles_on=None, toggles_off=None, priority=0, guard=None):
     """Registers a new function to a hook
 
     :param hook_name: full name of hook to register to
@@ -374,13 +376,14 @@ def register(func=None, hook_name=None, token=None, tags=None, needs=None, provi
             toggles_on=toggles_on,
             toggles_off=toggles_off,
             priority=priority,
+            guard=guard,
         )
     assert hook_name is not None
     registration = get_or_create_hook(
         hook_name).register(
             func, token=token, tags=tags, needs=needs, provides=provides, reentrant=reentrant,
             toggles_on=toggles_on, toggles_off=toggles_off,
-            priority=priority,
+            priority=priority, guard=guard,
         )
     assert registration
     return func
