@@ -183,6 +183,24 @@ Handlers can be registered with *tokens*. A token is anything that supports equa
 
 
 
+Registration Guard
+------------------
+
+Sometimes it is desirable to have a way to enable/disable registrations dynamically. For this purpose, gossip supports guards on handlers. A guard is a callable object, returning whether or not the handler should be triggered
+
+.. code-block:: python
+
+    >>> class State(object): enabled=False
+    >>> state = State()
+		>>> @gossip.register('guarded_hook', guard=lambda: state.enabled)
+		... def handler1():
+		...     print('Called')
+    >>> gossip.trigger('guarded_hook')
+    >>> state.enabled = True
+    >>> gossip.trigger('guarded_hook')
+    Called
+
+
 Getting Hooks by Name
 ---------------------
 
