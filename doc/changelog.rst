@@ -1,6 +1,8 @@
 Changelog
 =========
 
+* :release:`2.4.0 <03-09-2019>`
+* :feature:`39` Add ``guard`` argument to ``register``
 * :release:`2.3.1 <28-08-2018>`
 * :bug:`36` Ensure ``define_hook`` handles hook kwargs even if it already being defined
 * :bug:`30` Switch to PBR
