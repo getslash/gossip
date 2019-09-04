@@ -21,3 +21,4 @@ deploy:
     tags: true
     repo: getslash/gossip
     branch: develop
+    python: "3.6"
