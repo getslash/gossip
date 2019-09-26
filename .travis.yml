@@ -8,7 +8,7 @@ python:
 - pypy
 install:
 - pip install -U pip
-- pip install -e .[testing]
+- pip install -e .[testing,sphinx]
 script:
 - pytest
 - pylint --rcfile=.pylintrc gossip tests
