@@ -7,7 +7,7 @@ from contextlib import contextmanager
 def _noop():
     yield
 
-class UnitestSteps(object):
+class UnitestSteps():
     def __init__(self, param_name=None):
         self._steps = []
         self._got_permutations = False

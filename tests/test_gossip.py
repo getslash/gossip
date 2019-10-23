@@ -147,7 +147,7 @@ def test_group_name_taken_by_hook():
 
 def test_register_class_and_instance_methods():
 
-    class MyClass(object):
+    class MyClass():
 
         @gossip.register("hook")
         @classmethod

@@ -16,7 +16,7 @@ class NotNowException(Exception):
 class CannotResolveDependencies(Exception):
     def __init__(self, *args, **kwargs):
         self.unmet_dependencies = kwargs.pop('unmet_deps', None)
-        super(CannotResolveDependencies, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
 class CannotMuteHooks(Exception):
     pass

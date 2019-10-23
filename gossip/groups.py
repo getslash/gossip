@@ -5,10 +5,10 @@ from .exceptions import GroupNotFound, NameAlreadyUsed
 from .helpers import DONT_CARE
 
 
-class Group(object):
+class Group():
 
     def __init__(self, name, parent=None):
-        super(Group, self).__init__()
+        super().__init__()
         self.name = name
         self._parent = parent
         if self._parent is not None and not self._parent.is_global():

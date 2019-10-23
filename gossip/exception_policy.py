@@ -5,7 +5,7 @@ from ._compat import reraise
 
 _logger = logbook.Logger(__name__)
 
-class ExceptionPolicy(object):
+class ExceptionPolicy():
 
     @contextmanager
     def context(self):
@@ -41,8 +41,8 @@ class IgnoreExceptions(ExceptionPolicy):
 class Inherit(ExceptionPolicy):
     pass
 
-class TriggerContext(object):
+class TriggerContext():
 
     def __init__(self):
-        super(TriggerContext, self).__init__()
+        super().__init__()
         self.exceptions = []

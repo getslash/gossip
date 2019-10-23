@@ -190,7 +190,7 @@ Sometimes it is desirable to have a way to enable/disable registrations dynamica
 
 .. code-block:: python
 
-    >>> class State(object): enabled=False
+    >>> class State(): enabled=False
     >>> state = State()
 		>>> @gossip.register('guarded_hook', guard=lambda: state.enabled)
 		... def handler1():
