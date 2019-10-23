@@ -22,10 +22,10 @@ _logger = logbook.Logger(__name__)
 _REGISTER_NO_OP = Sentinel('REGISTER_NO_OP')
 
 
-class Hook(object):
+class Hook():
 
     def __init__(self, group, name, arg_names=None, doc=None, deprecated=False, can_be_muted=None):
-        super(Hook, self).__init__()
+        super().__init__()
         self.group = group
         self.name = name
         self.tags = None

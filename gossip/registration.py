@@ -11,11 +11,11 @@ _registration_id = itertools.count()
 _token_registrations = {}
 
 
-class Registration(object):
+class Registration():
 
     def __init__(self, func, hook, token=None, tags=None, needs=None, provides=None, reentrant=True, toggles_on=None,
                  toggles_off=None, priority=0, guard=None):
-        super(Registration, self).__init__()
+        super().__init__()
 
         assert not (toggles_off is not None and toggles_on is not None), 'Cannot specify both toggles_on and toggles_off'
         assert (guard is None) or callable(guard), "Registration 'guard' argument must be callable if specified"
