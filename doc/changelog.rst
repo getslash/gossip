@@ -1,6 +1,7 @@
 Changelog
 =========
 
+* :feature:`43` Drop support for Python version < 3.6
 * :feature:`41` Add Sphinx extension
 * :release:`2.4.0 <03-09-2019>`
 * :feature:`39` Add ``guard`` argument to ``register``

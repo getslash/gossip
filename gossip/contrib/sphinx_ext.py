@@ -12,7 +12,7 @@ _INDENT_SIZE = 4
 def _indent(text, level=1):
     indent_str = ' ' * (_INDENT_SIZE * level)
     return "".join(
-        "{prefix}{text}".format(prefix=indent_str if line.strip() else "", text=line)
+        f'{indent_str if line.strip() else ""}{line}'
         for line in text.splitlines(True)
         )
 
@@ -21,7 +21,7 @@ def _yield_mutliple_values(title, values):
     if not values:
         return
 
-    yield "**{}**".format(title)
+    yield f"**{title}**"
 
     yield ""
 
@@ -69,7 +69,7 @@ class GossipDirective(rst.Directive):
         try:
             group = gossip.groups.get_group(group_name)
         except Exception as e:
-            raise self.error("Could not retrieve :group_name: ({!r})".format(e))
+            raise self.error(f"Could not retrieve :group_name: ({e!r})")
 
         sections = []
         source_name = group.full_name

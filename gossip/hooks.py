@@ -22,17 +22,17 @@ _logger = logbook.Logger(__name__)
 _REGISTER_NO_OP = Sentinel('REGISTER_NO_OP')
 
 
-class Hook(object):
+class Hook():
 
     def __init__(self, group, name, arg_names=None, doc=None, deprecated=False, can_be_muted=None):
-        super(Hook, self).__init__()
+        super().__init__()
         self.group = group
         self.name = name
         self.tags = None
         if self.group.is_global():
             self.full_name = name
         else:
-            self.full_name = "{0}.{1}".format(self.group.full_name, self.name)
+            self.full_name = f"{self.group.full_name}.{self.name}"
         registry.hooks[self.full_name] = self
         self._registrations = []
         self._empty_regisrations = []
@@ -49,8 +49,7 @@ class Hook(object):
     def configure(self, **kwargs):
         normalized_args = self._normalize_arguments(kwargs.pop('arg_names', None))
         if (normalized_args is not None) and (normalized_args != self._arguments):
-            assert self._arguments is None, "Cannot override exists arg_names {} with {}".format(
-                list(self._arguments), list(normalized_args))
+            assert self._arguments is None, f"Cannot override exists arg_names {list(self._arguments)} with {list(normalized_args)}"
             self._arguments = normalized_args
 
         doc = kwargs.pop('doc', None)
@@ -66,7 +65,7 @@ class Hook(object):
             self._can_be_muted = can_be_muted
 
         if kwargs:
-            raise UnsupportedHookParams("Unsupported hook params: {}".format(', '.join(kwargs)))
+            raise UnsupportedHookParams(f"Unsupported hook params: {', '.join(kwargs)}")
 
     def _get_registration_list_from_func(self, func):
         if func is _REGISTER_NO_OP:
@@ -105,7 +104,7 @@ class Hook(object):
         registry.hooks.pop(self.full_name)
 
     def set_tags(self, tags):
-        assert not self.tags, "Cannot override exists tags {} with {}".format(self.tags, tags)
+        assert not self.tags, f"Cannot override exists tags {self.tags} with {tags}"
         self.tags = tags
 
     def get_registrations(self, include_empty=False):
@@ -134,8 +133,8 @@ class Hook(object):
         normalize_tags = lambda tag_: set(tag_) if tag_ is not None else set()
         extra_tags = normalize_tags(tags) - normalize_tags(self.tags)
         if extra_tags:
-            raise UnsupportedHookTags("hook {0} support {1} tags, not: {2}".format(
-                self.full_name, self.tags, extra_tags))
+            raise UnsupportedHookTags(
+                f"hook {self.full_name} support {self.tags} tags, not: {extra_tags}")
 
     def validate_kwargs(self, kwargs):
         if self._arguments is None or not self.group.is_strict():
@@ -143,20 +142,19 @@ class Hook(object):
 
         unknown = set(kwargs) - set(self._arguments)
         if unknown:
-            raise TypeError('Unknown arguments specified: {}'.format(', '.join(unknown)))
+            raise TypeError(f"Unknown arguments specified: {', '.join(unknown)}")
 
         for arg_name, arg_types in self._arguments.items():
             if arg_name not in kwargs:
-                raise TypeError('Missing argument {!r}'.format(arg_name))
+                raise TypeError(f'Missing argument {arg_name!r}')
             if arg_types is not None and not isinstance(kwargs[arg_name], arg_types):
-                raise TypeError('Incorrect type for argument {}. Expected {!r}, got {!r}'.format(
-                    arg_name, arg_types, type(kwargs[arg_name])))
+                raise TypeError(f'Incorrect type for argument {arg_name}. Expected {arg_types!r}, got {type(kwargs[arg_name])!r}')
 
 
     def validate_strict(self, registrations_to_validate=None):
         if not self._defined:
             raise UndefinedHook(
-                "hook {0} wasn't defined yet".format(self.full_name))
+                f"hook {self.full_name} wasn't defined yet")
         if registrations_to_validate is None:
             registrations_to_validate = self._registrations + self._empty_regisrations
         for registration in registrations_to_validate:
@@ -166,7 +164,7 @@ class Hook(object):
         """Registers a new handler to this hook
         """
         if self.deprecated:
-            warn_deprecation('Hook {0} is deprecated!'.format(self.full_name), frame_correction=+1)
+            warn_deprecation(f'Hook {self.full_name} is deprecated!', frame_correction=+1)
         new_registration = Registration(func, self, token=token, tags=tags, needs=needs, provides=provides, **kwargs)
         if self.group.is_strict():
             self.validate_strict([new_registration])
@@ -207,10 +205,10 @@ class Hook(object):
     def trigger(self, kwargs, tags=None):
         if self._unmet_deps:
             deps_str = ', '.join([str(dep) for dep in self._unmet_deps])
-            raise CannotResolveDependencies('Hook {0!r} has unmet dependencies: {1}'.format(self, deps_str),
+            raise CannotResolveDependencies(f'Hook {self!r} has unmet dependencies: {deps_str}',
                                             unmet_deps=self._unmet_deps)
         if self.full_name in _muted_stack[-1]:
-            _logger.debug("Hook {0!r} muted, skipping trigger", self)
+            _logger.debug(f"Hook {self!r} muted, skipping trigger")
             return
 
         self.validate_tags(tags)
@@ -242,7 +240,7 @@ class Hook(object):
                 if deferred:
                     if not any_resolved:
                         raise CannotResolveDependencies(
-                            "Cannot resolve handler dependencies for {0}".format(self))
+                            f"Cannot resolve handler dependencies for {self}")
                     registrations = deferred
                     deferred = []
                 else:
@@ -267,7 +265,7 @@ class Hook(object):
         return exc_info
 
     def __repr__(self):
-        return "<Hook {0}({1})>".format(self.name, ", ".join(self._arguments or ()))
+        return f'<Hook {self.name}({", ".join(self._arguments or ())})>'
 
 
 def trigger(hook_name, **kwargs):
@@ -301,7 +299,7 @@ def get_hook(hook_name):
     try:
         return registry.hooks[hook_name]
     except KeyError:
-        raise HookNotFound("Hook {0} does not exist".format(hook_name))
+        raise HookNotFound(f"Hook {hook_name} does not exist")
 
 
 def create_hook(hook_name, **kwargs):
@@ -309,11 +307,11 @@ def create_hook(hook_name, **kwargs):
     """
     if hook_name in registry.hooks:
         raise NameAlreadyUsed(
-            "A hook named {0} already exists. Cannot create a hook with the same name".format(hook_name))
+            f"A hook named {hook_name} already exists. Cannot create a hook with the same name")
 
     if hook_name in registry.groups:
         raise NameAlreadyUsed(
-            "A group named {0} already exists. Cannot create a hook with the same name".format(hook_name))
+            f"A group named {hook_name} already exists. Cannot create a hook with the same name")
 
     if "." in hook_name:
         group_name, hook_base_name = hook_name.rsplit(".", 1)
@@ -335,7 +333,7 @@ def define(hook_name, **kwargs):
     tags = kwargs.pop('tags', None)
     returned = get_or_create_hook(hook_name)
     if returned.is_defined():
-        raise NameAlreadyUsed("Hook {0} is already defined".format(hook_name))
+        raise NameAlreadyUsed(f"Hook {hook_name} is already defined")
     if kwargs:
         returned.configure(**kwargs)
     if tags:
@@ -447,9 +445,9 @@ def mute_context(hook_names):
         raise TypeError('hook names to mute must be a list or a tuple')
     cannot_be_muted = [hook_name for hook_name in set(hook_names) if not _can_be_muted(hook_name)]
     if cannot_be_muted:
-        msg = 'Muting is forbidden for {} {}'.format(
-            'the hook' if len(cannot_be_muted) == 1 else 'hooks',
-            ', '.join("'{}'".format(hook_name) for hook_name in cannot_be_muted))
+        msg = f"""Muting is forbidden
+        for {'the hook' if len(cannot_be_muted) == 1 else 'hooks',}
+        {', '.join(f"'{hook_name}'" for hook_name in cannot_be_muted)}"""
         raise CannotMuteHooks(msg)
     _muted_stack.append(_muted_stack[-1] | set(hook_names))
     try:

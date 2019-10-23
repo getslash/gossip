@@ -12,7 +12,7 @@ Hooks can receive arguments, which are then passed to the handlers.
 
 		>>> @gossip.register('with_arguments')
 		... def handler(a, b, c):
-		...     print('Called: {0} {1} {2}'.format(a, b, c))
+		...     print(f'Called: {a} {b} {c}')
 		
 		>>> gossip.trigger('with_arguments', a=1, b=2, c=3)
 		Called: 1 2 3
@@ -190,7 +190,7 @@ Sometimes it is desirable to have a way to enable/disable registrations dynamica
 
 .. code-block:: python
 
-    >>> class State(object): enabled=False
+    >>> class State(): enabled=False
     >>> state = State()
 		>>> @gossip.register('guarded_hook', guard=lambda: state.enabled)
 		... def handler1():
@@ -285,7 +285,7 @@ In some advanced scenarios you might want to add a callback before each registra
        >>> hook = gossip.define('my_hook')
        >>> @hook.add_pre_trigger_callback
        ... def before_trigger(registration, kwargs):
-       ...     print('{0} is about to be called with {1}'.format(registration.func, kwargs))
+       ...     print(f'{registration.func} is about to be called with {kwargs}')
 
 
 Deprecating Hooks

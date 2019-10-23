@@ -25,7 +25,7 @@ def undefine_all():
 
 @pytest.fixture
 def hook_name():
-    return "hook{0}".format(next(hook_id))
+    return f"hook{next(hook_id)}"
 
 @pytest.fixture
 def hook(hook_name):
@@ -40,18 +40,18 @@ def registered_hooks():
     returned = []
     for i in range(10):
         if i % 3 == 0:
-            hook_name = "group{0}.hook{1}".format(next(hook_id), next(hook_id))
+            hook_name = f"group{next(hook_id)}.hook{next(hook_id)}"
         else:
-            hook_name = "hook{0}".format(next(hook_id))
+            hook_name = f"hook{next(hook_id)}"
         returned.append(RegisteredHook(hook_name))
     return returned
 
 timestamp = itertools.count()
 
-class RegisteredHook(object):
+class RegisteredHook():
 
     def __init__(self, hook_name):
-        super(RegisteredHook, self).__init__()
+        super().__init__()
 
         self.name = hook_name
         self._fail = False
@@ -107,7 +107,7 @@ def checkpoint():
     return Checkpoint()
 
 
-class Checkpoint(object):
+class Checkpoint():
 
     num_times = 0
 
@@ -122,11 +122,13 @@ class Checkpoint(object):
         self.num_times = 0
 
 
-class Timeline(object):
+class Timeline():
 
     def __init__(self):
-        super(Timeline, self).__init__()
-        self.hook_name = 'parent_group_{0}.subgroup_{0}.hook_{1}'.format(uuid4(), uuid4())
+        super().__init__()
+        _uuid4_0 = uuid4()
+        _uuid4_1 = uuid4()
+        self.hook_name = f'parent_group_{_uuid4_0}.subgroup_{_uuid4_0}.hook_{_uuid4_1}'
         self.timestamps = itertools.count(1000)
         self.event_index = itertools.count()
 
@@ -153,16 +155,16 @@ class Timeline(object):
 def timeline():
     return Timeline()
 
-class Event(object):
+class Event():
 
     _timestamp = None
 
     def __init__(self, index):
-        super(Event, self).__init__()
+        super().__init__()
         self.index = index
 
     def __repr__(self):
-        return '<Evt {0}>'.format(self.index)
+        return f'<Evt {self.index}>'
 
     @property
     def timestamp(self):
@@ -175,7 +177,7 @@ class Event(object):
         self._timestamp = t
 
 
-class Counter(object):
+class Counter():
 
     _value = 0
 

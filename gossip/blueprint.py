@@ -4,14 +4,14 @@ from . import hooks
 from . import groups
 
 
-class Blueprint(object):
+class Blueprint():
     """Represents a hook blueprint
 
     Blueprints are sets of hooks that can be registered or unregistered with a single operation.
     """
 
     def __init__(self):
-        super(Blueprint, self).__init__()
+        super().__init__()
         self._hooks = []
         self._token = str(uuid4())
 
@@ -31,7 +31,7 @@ class Blueprint(object):
         try:
             for hook_name, func, kwargs in self._hooks:
                 if group is not None:
-                    hook_name = '{0}.{1}'.format(group, hook_name)
+                    hook_name = f'{group}.{hook_name}'
                 hooks.register(func=func, hook_name=hook_name, token=self._token, **kwargs)
         except:
             self.uninstall()

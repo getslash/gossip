@@ -5,15 +5,14 @@ from .exceptions import GroupNotFound, NameAlreadyUsed
 from .helpers import DONT_CARE
 
 
-class Group(object):
+class Group():
 
     def __init__(self, name, parent=None):
-        super(Group, self).__init__()
+        super().__init__()
         self.name = name
         self._parent = parent
         if self._parent is not None and not self._parent.is_global():
-            self.full_name = "{0}.{1}".format(
-                self._parent.full_name, self.name)
+            self.full_name = f"{self._parent.full_name}.{self.name}"
         else:
             self.full_name = name
         self.reset()
@@ -138,7 +137,7 @@ class Group(object):
         """
         if not isinstance(policy, ExceptionPolicy):
             raise ValueError(
-                "Expected ExceptionPolicy instance. Got {0!r}".format(policy))
+                f"Expected ExceptionPolicy instance. Got {policy!r}")
         if isinstance(policy, Inherit) and self._parent is None:
             raise RuntimeError(
                 "Global gossip group cannot inherit exception policy from parent")
@@ -159,7 +158,7 @@ class Group(object):
         return self._exception_policy
 
     def __repr__(self):
-        return "<Gossip group {0!r}>".format(self.name)
+        return f"<Gossip group {self.name!r}>"
 
 
 def get_global_group():
@@ -200,12 +199,11 @@ def create_group(name):
     :rtype: :class:`gossip.group.Group`
     """
     if name in registry.groups:
-        raise NameAlreadyUsed(
-            "Group with name {0} already exists".format(name))
+        raise NameAlreadyUsed(f"Group with name {name} already exists")
 
     if name in registry.hooks is not None:
         raise NameAlreadyUsed(
-            "Hook with name {0} already exists. Cannot create group with same name".format(name))
+            f"Hook with name {name} already exists. Cannot create group with same name")
 
     if "." in name:
         parent_name, group_name = name.rsplit(".", 1)

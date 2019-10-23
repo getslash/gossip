@@ -3,10 +3,10 @@ LAST = 'LAST'
 DONT_CARE = 'DONT_CARE'
 
 
-class Toggle(object):
+class Toggle():
 
     def __init__(self):
-        super(Toggle, self).__init__()
+        super().__init__()
         self._on = False
 
     def is_on(self):
