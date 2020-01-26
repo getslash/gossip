@@ -11,6 +11,7 @@ from ._compat import itervalues, string_types
 from .exceptions import (CannotResolveDependencies, HookNotFound,
                          NameAlreadyUsed, NotNowException, UndefinedHook,
                          CannotMuteHooks, UnsupportedHookParams,
+                         IllegalHookName,
                          UnsupportedHookTags)
 from .registration import Registration
 from .utils import topological_sort_registrations
@@ -307,6 +308,9 @@ def get_hook(hook_name):
 def create_hook(hook_name, **kwargs):
     """Creates a hook with the given full name, creating intermediate groups if necessary
     """
+    if not isinstance(hook_name, str):
+        raise IllegalHookName("Hook name must be string (got: {})".format(hook_name))
+
     if hook_name in registry.hooks:
         raise NameAlreadyUsed(
             "A hook named {0} already exists. Cannot create a hook with the same name".format(hook_name))
@@ -320,6 +324,9 @@ def create_hook(hook_name, **kwargs):
     else:
         group_name = None
         hook_base_name = hook_name
+
+    if not hook_base_name:
+        raise IllegalHookName("Hook name cannot be empty string (got: {})".format(hook_name))
 
     group = groups.get_or_create_group(group_name)
     hook = Hook(group, hook_base_name, **kwargs)

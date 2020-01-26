@@ -1,6 +1,9 @@
 class HookException(Exception):
     pass
 
+class IllegalHookName(HookException):
+    pass
+
 class NameAlreadyUsed(HookException):
     pass
 
