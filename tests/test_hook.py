@@ -1,7 +1,8 @@
 import pytest
 
 from gossip import Hook, get_global_group, define, trigger, register
-from gossip.exceptions import UnsupportedHookParams
+from gossip.hooks import create_hook
+from gossip.exceptions import UnsupportedHookParams, IllegalHookName
 
 
 def test_pre_trigger_callback(checkpoint):
@@ -77,6 +78,12 @@ def test_unsupported_hook_params():
     with pytest.raises(UnsupportedHookParams) as caught:
         hook.configure(**unsupported_params)
     assert all(param_name in str(caught.value) for param_name in unsupported_params)
+
+
+@pytest.mark.parametrize('hook_name', ['', 'some_group.', 5])
+def test_create_hook_with_illegal_name(hook_name):
+    with pytest.raises(IllegalHookName):
+        create_hook(hook_name)
 
 
 @pytest.mark.parametrize('stringify', [str, repr])
