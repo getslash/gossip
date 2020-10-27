@@ -1,5 +1,6 @@
 Changelog
 =========
+* :feature:`-` Support for Python version 3.9
 * :feature:`-` Support for Python version 3.8
 * :feature:`43` Drop support for Python version < 3.5
 * :feature:`41` Add Sphinx extension
