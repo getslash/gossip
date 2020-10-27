@@ -1,7 +1,7 @@
 default: test
 
 test: env
-	.env/bin/py.test
+	.env/bin/pytest
 
 .PHONY: doc
 doc: env
@@ -11,10 +11,8 @@ doc: env
 env: .env/.up-to-date
 
 
-.env/.up-to-date: setup.py Makefile test_requirements.txt doc_requirements.txt
+.env/.up-to-date: setup.cfg requirements.txt Makefile
 	virtualenv .env
-	.env/bin/pip install -e .
-	.env/bin/pip install -r test_requirements.txt
-	.env/bin/pip install -r doc_requirements.txt
+	.env/bin/pip install -e ".[testing,doc]"
 	touch $@
 
