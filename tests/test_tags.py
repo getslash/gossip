@@ -79,6 +79,6 @@ def setup_hook(is_defined, is_strict, specify_tags, register_before_define, crea
         _get_or_create_group(is_strict)
 
 def _get_or_create_group(is_strict):
-    g = gossip.get_or_create_group(_HOOK_NAME.split('.')[0])
+    g = gossip.get_or_create_group(_HOOK_NAME.split('.')[0])  # pylint: disable=use-maxsplit-arg
     if is_strict:
         g.set_strict()
