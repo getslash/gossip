@@ -1,5 +1,7 @@
 Changelog
 =========
+* :feature:`-` Support for Python versions 3.9, 3.10, 3.11
+* :feature:`-` Move CI to GitHub actions (from Travis CI)
 * :feature:`-` Support for Python version 3.8
 * :feature:`43` Drop support for Python version < 3.5
 * :feature:`41` Add Sphinx extension
