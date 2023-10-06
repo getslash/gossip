@@ -203,7 +203,7 @@ def create_group(name):
         raise NameAlreadyUsed(
             "Group with name {0} already exists".format(name))
 
-    if name in registry.hooks is not None:
+    if name in registry.hooks:
         raise NameAlreadyUsed(
             "Hook with name {0} already exists. Cannot create group with same name".format(name))
 
