@@ -112,7 +112,7 @@ def test_set_strict_with_subgroups_and_tags(hook_name):
     hook = gossip.define(hook_name, tags=("some_tag", "other_tag"))
 
     illegal_tags_hook = gossip.define(".".join([hook.group.full_name, "hook_with_illegal_tags"]))
-    gossip.register(handler, illegal_tags_hook.full_name, tags=("fake_tag"))
+    gossip.register(handler, illegal_tags_hook.full_name, tags=("fake_tag",))
     with pytest.raises(UnsupportedHookTags):
         gossip.get_or_create_group(main_group_name).set_strict()
     illegal_tags_hook.unregister_all()
