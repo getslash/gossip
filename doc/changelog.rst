@@ -1,5 +1,6 @@
 Changelog
 =========
+* :feature:`-` Support for Python version 3.12
 * :feature:`-` Use ``pyproject.toml`` for package configuration
 * :feature:`-` Support for Python versions 3.9, 3.10, 3.11
 * :feature:`-` Move CI to GitHub actions (from Travis CI)
