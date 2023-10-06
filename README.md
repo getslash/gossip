@@ -1,9 +1,8 @@
-|                       |                                                                                         |
-|-----------------------|-----------------------------------------------------------------------------------------|
-| Build Status          | ![Build Status] (https://secure.travis-ci.org/getslash/gossip.png?branch=master,develop) |
-| Supported Versions    | ![Supported Versions] (https://img.shields.io/pypi/pyversions/gossip.svg)               |
-| Latest Version        | ![Latest Version] (https://img.shields.io/pypi/v/gossip.svg)                            |
-
+|                    |                                                                                                         |
+| ------------------ | ------------------------------------------------------------------------------------------------------- |
+| Build Status       | ![Build Status](https://github.com/getslash/gossip/actions/workflows/test.yml/badge.svg?branch=develop) |
+| Supported Versions | ![Supported Versions](https://img.shields.io/pypi/pyversions/gossip.svg)                                |
+| Latest Version     | ![Latest Version](https://img.shields.io/pypi/v/gossip.svg)                                             |
 
 # Overview
 
@@ -47,10 +46,8 @@ Plain publish/subscribe is just the tip of the iceberg. Gossip is geared towards
 3. Non-reentrant hooks
 4. Custom exception handling strategies
 
-And much more. For more information, please refer to [the documentation](http://gossip.readthedocs.org ) 
-										
+And much more. For more information, please refer to [the documentation](http://gossip.readthedocs.org)
 
 # Licence
 
 BSD3
-
