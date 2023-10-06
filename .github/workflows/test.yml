@@ -5,6 +5,8 @@ on:
   pull_request:
   workflow_dispatch:
     # manually triggered
+  schedule:
+    - cron: "0 12 * * 5"
 
 jobs:
   build:
