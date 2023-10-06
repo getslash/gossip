@@ -11,7 +11,7 @@ doc: env
 env: .env/.up-to-date
 
 
-.env/.up-to-date: setup.cfg Makefile requirements.txt
+.env/.up-to-date: Makefile pyproject.toml
 	virtualenv .env
 	.env/bin/pip install -e '.[testing,doc]'
 	touch $@
