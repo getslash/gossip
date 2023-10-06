@@ -26,3 +26,18 @@ jobs:
           .env/bin/pip install '.[doc,testing]'
           .env/bin/pytest tests
           .env/bin/pylint --rcfile=.pylintrc gossip tests
+
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+      - name: Building docs
+        run: |
+          python -m venv .env
+          .env/bin/pip install -U setuptools pip
+          .env/bin/pip install '.[doc]'
+          .env/bin/sphinx-build -a -W -E doc build/sphinx/html
