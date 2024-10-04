@@ -1,5 +1,8 @@
 Changelog
 =========
+
+* :feature:`-` Use UV in CI
+* :feature:`-` Support for Python version >= 3.8, <= 3.13
 * :feature:`-` Support for Python version 3.12
 * :feature:`-` Use ``pyproject.toml`` for package configuration
 * :feature:`-` Support for Python versions 3.9, 3.10, 3.11
