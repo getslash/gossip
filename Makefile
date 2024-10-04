@@ -1,18 +1,12 @@
 default: test
 
-test: env
-	.env/bin/pytest
-
 .PHONY: doc
 doc: env
-	.env/bin/python setup.py build_sphinx -a -E
+	.venv/bin/python setup.py build_sphinx -a -E
 
+test: env
+	uv run --extra testing pytest tests
 
-env: .env/.up-to-date
-
-
-.env/.up-to-date: Makefile pyproject.toml
-	virtualenv .env
-	.env/bin/pip install -e '.[testing,doc]'
-	touch $@
-
+env:
+	uv venv
+	uv pip install -e ".[testing]"

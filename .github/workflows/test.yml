@@ -13,33 +13,37 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.7", "3.8", "3.9", "3.10", "3.11", "3.12"]
+        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12", "3.13"]
 
     steps:
-      - uses: actions/checkout@v3
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
-        with:
-          python-version: ${{ matrix.python-version }}
+      - name: Checkout the repository
+        uses: actions/checkout@main
+      - name: Install the default version of uv
+        id: setup-uv
+        uses: astral-sh/setup-uv@v3
+      - name: Print the installed version
+        run: echo "Installed uv version is ${{ steps.setup-uv.outputs.uv-version }}"
+      - name: Install Python ${{ matrix.python-version }}
+        run: uv python install  ${{ matrix.python-version }}
       - name: Tests
         run: |
-          python -m venv .env
-          .env/bin/pip install -U setuptools pip
-          .env/bin/pip install '.[doc,testing]'
-          .env/bin/pytest tests
-          .env/bin/pylint --rcfile=.pylintrc gossip tests
+          uv venv
+          uv pip install ".[testing]"
+          .venv/bin/pytest tests
+          .venv/bin/pylint --rcfile=.pylintrc gossip tests
 
   docs:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.11"
+      - name: Checkout the repository
+        uses: actions/checkout@main
+      - name: Install the default version of uv
+        id: setup-uv
+        uses: astral-sh/setup-uv@v3
+      - name: Print the installed version
+        run: echo "Installed uv version is ${{ steps.setup-uv.outputs.uv-version }}"
       - name: Building docs
         run: |
-          python -m venv .env
-          .env/bin/pip install -U setuptools pip
-          .env/bin/pip install '.[doc]'
-          .env/bin/sphinx-build -a -W -E doc build/sphinx/html
+          uv venv --python 3.11
+          uv pip install ".[doc]"
+          .venv/bin/sphinx-build -a -W -E doc build/sphinx/html
