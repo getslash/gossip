@@ -28,7 +28,7 @@ jobs:
       - name: Tests
         run: |
           uv venv
-          uv pip install ".[testing]"
+          uv pip install ".[testing,doc]"
           .venv/bin/pytest tests
           .venv/bin/pylint --rcfile=.pylintrc gossip tests
 
